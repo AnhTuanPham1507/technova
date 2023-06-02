@@ -1,0 +1,1 @@
+{"version":3,"file":"delete-product.dto.js","sourceRoot":"","sources":["../../../../../src/modules/products/dtos/requests/delete-product.dto.ts"],"names":[],"mappings":";;;;;;;;;;;;;AAAA,6CAA8C;AAE9C,MAAa,gBAAgB;;;;CAM5B;AALG;IAAC,IAAA,qBAAW,EAAC;QACT,IAAI,EAAE,IAAI;QACV,OAAO,EAAE,sCAAsC;KAClD,CAAC;;4CACS;AALf,4CAMC"}

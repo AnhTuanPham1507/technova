@@ -1,0 +1,29 @@
+version: "3"
+services:
+  redis:
+    image: "redis:7.0.4-alpine"
+    env_file:
+      - .docker.env
+    ports:
+      - "6379:6379"
+    command: --requirepass $REDIS_PASSWORD
+
+  postgres:
+    image: postgres:15.2
+    restart: always
+    ports:
+      - "5432:5432"
+    volumes:
+      - type: bind
+        source: ./database/postgres
+        target: /var/lib/postgresql/data
+        bind: 
+          create_host_path: true
+      - ./database/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d:ro
+    env_file:
+      - .docker.env
+
+  adminer:
+    image: adminer:4.8.1
+    ports:
+      - "8080:8080"

@@ -1,0 +1,67 @@
+{
+  "compilerOptions": {
+    "rootDir": "src",
+    "module": "CommonJS",
+    "declaration": false,
+    "noImplicitAny": false,
+    "removeComments": true,
+    "noLib": false,
+    "allowSyntheticDefaultImports": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "target": "ES2017",
+    "sourceMap": true,
+    "outDir": "./dist",
+    "baseUrl": "./src",
+    "incremental": false,
+    "strictNullChecks": true,
+    "moduleResolution": "node",
+    "paths": {
+      "@config/*": [
+        "config/*"
+      ],
+      "@constants/*": [
+        "constants/*"
+      ],
+      "@decorators/*": [
+        "decorators/*"
+      ],
+      "@filters/*": [
+        "filters/*"
+      ],
+      "@guards/*": [
+        "guards/*"
+      ],
+      "@interceptors/*": [
+        "interceptors/*"
+      ],
+      "@middlewares/*": [
+        "middlewares/*"
+      ],
+      "@modules/*": [
+        "modules/*"
+      ],
+      "@common/*": [
+        "common/*"
+      ],
+      "@interfaces/*": [
+        "interfaces/*"
+      ],
+      "@/*": [
+        "./*"
+      ],
+    }
+  },
+  "include": [
+    "src/**/*",
+    "src/utils/my-moment.util.ts",
+  ],
+  "exclude": [
+    "node_modules",
+    "**/*.spec.ts"
+  ],
+  "resolveJsonModule": true,
+  "esModuleInterop": true,
+}

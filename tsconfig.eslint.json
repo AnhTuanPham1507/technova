@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig.json",
+  "include": [
+    "src/**/*.ts",
+    "*.ts",
+    "test/**/*.ts",
+    "subscriber-raphael/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    ".eslintrc.js"
+  ]
+}
