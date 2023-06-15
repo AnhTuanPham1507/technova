@@ -11,11 +11,11 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreateBrandDTO = void 0;
 const openapi = require("@nestjs/swagger");
-const abstract_dto_1 = require("../../../../common/dtos/abstract.dto");
 const swagger_1 = require("@nestjs/swagger");
-class CreateBrandDTO extends abstract_dto_1.AbstractDTO {
+const class_validator_1 = require("class-validator");
+class CreateBrandDTO {
     static _OPENAPI_METADATA_FACTORY() {
-        return { name: { required: true, type: () => String } };
+        return { name: { required: true, type: () => String }, imageId: { required: true, type: () => String } };
     }
 }
 __decorate([
@@ -23,7 +23,15 @@ __decorate([
         name: 'name',
         example: 'Microsoft'
     }),
+    (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], CreateBrandDTO.prototype, "name", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({
+        name: 'imageId',
+    }),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CreateBrandDTO.prototype, "imageId", void 0);
 exports.CreateBrandDTO = CreateBrandDTO;
 //# sourceMappingURL=create-brand.dto.js.map

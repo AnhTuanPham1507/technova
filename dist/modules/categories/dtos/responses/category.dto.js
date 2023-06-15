@@ -12,16 +12,18 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CategoryDTO = void 0;
 const openapi = require("@nestjs/swagger");
 const abstract_dto_1 = require("../../../../common/dtos/abstract.dto");
+const image_dto_1 = require("../../../images/dtos/responses/image.dto");
 const product_dto_1 = require("../../../products/dtos/responses/product.dto");
 const swagger_1 = require("@nestjs/swagger");
 class CategoryDTO extends abstract_dto_1.AbstractDTO {
-    constructor(category) {
+    constructor(category, imageDTO, productsDTO) {
         super(category);
         this.name = category.name;
-        this.products = category.products ? category.products.map(product => new product_dto_1.ProductDTO(product)) : [];
+        this.products = productsDTO;
+        this.image = imageDTO;
     }
     static _OPENAPI_METADATA_FACTORY() {
-        return { name: { required: true, type: () => String }, products: { required: true, type: () => [require("../../../products/dtos/responses/product.dto").ProductDTO] } };
+        return { name: { required: true, type: () => String }, products: { required: false, type: () => [require("../../../products/dtos/responses/product.dto").ProductDTO] }, image: { required: false, type: () => require("../../../images/dtos/responses/image.dto").ImageDTO } };
     }
 }
 __decorate([
@@ -39,5 +41,12 @@ __decorate([
     }),
     __metadata("design:type", Array)
 ], CategoryDTO.prototype, "products", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({
+        name: 'image',
+        type: image_dto_1.ImageDTO,
+    }),
+    __metadata("design:type", image_dto_1.ImageDTO)
+], CategoryDTO.prototype, "image", void 0);
 exports.CategoryDTO = CategoryDTO;
 //# sourceMappingURL=category.dto.js.map

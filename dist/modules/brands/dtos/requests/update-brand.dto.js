@@ -11,11 +11,11 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UpdateBrandDTO = void 0;
 const openapi = require("@nestjs/swagger");
-const abstract_dto_1 = require("../../../../common/dtos/abstract.dto");
 const swagger_1 = require("@nestjs/swagger");
-class UpdateBrandDTO extends abstract_dto_1.AbstractDTO {
+const class_validator_1 = require("class-validator");
+class UpdateBrandDTO {
     static _OPENAPI_METADATA_FACTORY() {
-        return { name: { required: true, type: () => String }, productIds: { required: true, type: () => [String] } };
+        return { name: { required: true, type: () => String }, imageId: { required: true, type: () => String } };
     }
 }
 __decorate([
@@ -23,14 +23,15 @@ __decorate([
         name: 'name',
         example: 'Microsoft'
     }),
+    (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], UpdateBrandDTO.prototype, "name", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({
-        name: 'productIds',
-        isArray: true,
+        name: 'imageId',
     }),
-    __metadata("design:type", Array)
-], UpdateBrandDTO.prototype, "productIds", void 0);
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], UpdateBrandDTO.prototype, "imageId", void 0);
 exports.UpdateBrandDTO = UpdateBrandDTO;
 //# sourceMappingURL=update-brand.dto.js.map

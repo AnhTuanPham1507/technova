@@ -13,7 +13,10 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CategoryRepository = void 0;
+const page_meta_dto_1 = require("../../../../common/dtos/responses/page-meta.dto");
+const page_dto_1 = require("../../../../common/dtos/responses/page.dto");
 const query_type_enum_1 = require("../../../../constants/enums/query-type.enum");
+const category_dto_1 = require("../../dtos/responses/category.dto");
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
@@ -36,9 +39,15 @@ let CategoryRepository = class CategoryRepository {
     save(category) {
         return this.categoryRepo.save(category);
     }
-    getAll(queryType) {
+    async getAll(pageOptionsDTO) {
         const query = this.categoryRepo.createQueryBuilder('category');
-        switch (queryType) {
+        query.withDeleted();
+        if (pageOptionsDTO.q && pageOptionsDTO.q.length > 0) {
+            query.andWhere('(category.name ILIKE :q)', {
+                q: `%${pageOptionsDTO.q}%`,
+            });
+        }
+        switch (pageOptionsDTO.queryType) {
             case query_type_enum_1.QueryTypeEnum.ALL:
                 break;
             case query_type_enum_1.QueryTypeEnum.ACTIVATE:
@@ -48,7 +57,14 @@ let CategoryRepository = class CategoryRepository {
                 query.andWhere('category.deleted_at is not null');
                 break;
         }
-        return query.getMany();
+        query.orderBy(`category.${pageOptionsDTO.orderBy}`, pageOptionsDTO.order);
+        query.skip(pageOptionsDTO.skip);
+        query.take(pageOptionsDTO.take);
+        const itemCount = await query.getCount();
+        const result = await query.getMany();
+        const categoriesDTO = result.map((it) => new category_dto_1.CategoryDTO(it));
+        const pageMetaDto = new page_meta_dto_1.PageMetaDTO({ pageOptionsDTO, itemCount });
+        return new page_dto_1.PageDTO(categoriesDTO, pageMetaDto);
     }
 };
 CategoryRepository = __decorate([

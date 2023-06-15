@@ -77,6 +77,8 @@ let EnvConfigService = class EnvConfigService {
             flushCachePassword: this.configService.get('app.flushCachePassword'),
             frontendUrl: this.configService.get('app.frontendUrl'),
             tribeChannelName: this.configService.get('app.tribeChannelName'),
+            jwtSecretKey: this.configService.get('app.jwtSecretKey'),
+            jwtExpiresIn: this.configService.get('app.jwtExpiresIn')
         };
     }
     get redisConfig() {
@@ -96,6 +98,13 @@ let EnvConfigService = class EnvConfigService {
     get releaseVersion() {
         return {
             releaseVersion: process.env.VERSION,
+        };
+    }
+    get cloudinary() {
+        return {
+            name: this.configService.get('cloudinary.name'),
+            apiKey: this.configService.get('cloudinary.apiKey'),
+            secretKey: this.configService.get('cloudinary.secretKey'),
         };
     }
 };

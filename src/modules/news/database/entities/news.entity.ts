@@ -1,8 +1,5 @@
 import { AbstractEntity } from "@common/abstract.entity";
-import { newsTypeEnum } from "@constants/enums/news-type.enum";
-import { Column, Entity, OneToMany } from "typeorm";
-import { ReactEntity } from "./react.entity";
-import { NewsTagEntity } from "./tag.entity";
+import { Column, Entity } from "typeorm";
 
 
 @Entity({name: 'news'})
@@ -20,22 +17,9 @@ export class NewsEntity extends AbstractEntity {
     })
     content: string;
 
-    @Column({
-        name: 'type',
-        type: 'enum',
-        enum: newsTypeEnum
-    })
-    type: newsTypeEnum;
-
-    @OneToMany(
-        () => NewsTagEntity,
-        (newsTag) => newsTag.news
-    )
-    tags: NewsTagEntity[];
-
-    @OneToMany(
-        () => ReactEntity,
-        (react) => react.news
-    )
-    reacts: ReactEntity[];
+    constructor(title: string, content: string){
+        super();
+        this.title = title;
+        this.content = content;
+    }
 }

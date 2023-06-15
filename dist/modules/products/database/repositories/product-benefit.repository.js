@@ -22,14 +22,30 @@ let ProductBenefitRepository = class ProductBenefitRepository {
         this.productBenefitRepo = productBenefitRepo;
     }
     save(productBenefit) {
-        return this.save(productBenefit);
+        return this.productBenefitRepo.save(productBenefit);
     }
-    getByIds(ids) {
-        return this.productBenefitRepo.find({
-            where: {
-                id: (0, typeorm_2.In)(ids)
-            }
+    getByProductId(id) {
+        const query = this.productBenefitRepo.createQueryBuilder('benefit');
+        query.leftJoinAndSelect('benefit.product', 'product');
+        query.leftJoinAndSelect('benefit.benefitValues', 'benefitValues');
+        query.leftJoinAndSelect('benefitValues.productPackage', 'productPackage');
+        query.withDeleted();
+        query.where('(benefit.product = :productId)', {
+            productId: id,
         });
+        return query.getMany();
+    }
+    async getById(id) {
+        const productBenefit = await this.productBenefitRepo.findOne({
+            where: {
+                id
+            },
+            relations: ['benefitValues']
+        });
+        if (!productBenefit) {
+            throw new common_1.NotFoundException(`Product benefit with id ${id} can't be found`);
+        }
+        return productBenefit;
     }
 };
 ProductBenefitRepository = __decorate([

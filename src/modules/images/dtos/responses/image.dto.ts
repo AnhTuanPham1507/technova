@@ -1,6 +1,7 @@
 import { AbstractDTO } from "@common/dtos/abstract.dto";
 import { ImageObjectTypeEnum } from "@constants/enums/image-object-type.enum";
 import { ImageTypeEnum } from "@constants/enums/image-type.enum";
+import { ImageEntity } from "@modules/images/database/entities/image.entity";
 import { ApiProperty } from "@nestjs/swagger";
 
 export class ImageDTO extends AbstractDTO{
@@ -23,7 +24,7 @@ export class ImageDTO extends AbstractDTO{
         name: 'objectId',
         example: '123-abc'
     })
-    objectId: string;
+    objectId?: string;
 
     @ApiProperty({
         name: 'objectType',
@@ -31,5 +32,13 @@ export class ImageDTO extends AbstractDTO{
         enum: ImageObjectTypeEnum,
         example: ImageObjectTypeEnum.PRODUCT
     })
-    objectType: ImageObjectTypeEnum;
+    objectType?: ImageObjectTypeEnum;
+
+    constructor(image: ImageEntity){
+        super(image);
+        this.type = image.type;
+        this.path = image.path;
+        this.objectId = image.objectId;
+        this.objectType = image.objectType;
+    }
 }

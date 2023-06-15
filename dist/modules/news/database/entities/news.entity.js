@@ -12,13 +12,15 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.NewsEntity = void 0;
 const openapi = require("@nestjs/swagger");
 const abstract_entity_1 = require("../../../../common/abstract.entity");
-const news_type_enum_1 = require("../../../../constants/enums/news-type.enum");
 const typeorm_1 = require("typeorm");
-const react_entity_1 = require("./react.entity");
-const tag_entity_1 = require("./tag.entity");
 let NewsEntity = class NewsEntity extends abstract_entity_1.AbstractEntity {
+    constructor(title, content) {
+        super();
+        this.title = title;
+        this.content = content;
+    }
     static _OPENAPI_METADATA_FACTORY() {
-        return { title: { required: true, type: () => String }, content: { required: true, type: () => String }, type: { required: true, enum: require("../../../../constants/enums/news-type.enum").newsTypeEnum }, tags: { required: true, type: () => [require("./tag.entity").NewsTagEntity] }, reacts: { required: true, type: () => [require("./react.entity").ReactEntity] } };
+        return { title: { required: true, type: () => String }, content: { required: true, type: () => String } };
     }
 };
 __decorate([
@@ -35,24 +37,9 @@ __decorate([
     }),
     __metadata("design:type", String)
 ], NewsEntity.prototype, "content", void 0);
-__decorate([
-    (0, typeorm_1.Column)({
-        name: 'type',
-        type: 'enum',
-        enum: news_type_enum_1.newsTypeEnum
-    }),
-    __metadata("design:type", String)
-], NewsEntity.prototype, "type", void 0);
-__decorate([
-    (0, typeorm_1.OneToMany)(() => tag_entity_1.NewsTagEntity, (newsTag) => newsTag.news),
-    __metadata("design:type", Array)
-], NewsEntity.prototype, "tags", void 0);
-__decorate([
-    (0, typeorm_1.OneToMany)(() => react_entity_1.ReactEntity, (react) => react.news),
-    __metadata("design:type", Array)
-], NewsEntity.prototype, "reacts", void 0);
 NewsEntity = __decorate([
-    (0, typeorm_1.Entity)({ name: 'news' })
+    (0, typeorm_1.Entity)({ name: 'news' }),
+    __metadata("design:paramtypes", [String, String])
 ], NewsEntity);
 exports.NewsEntity = NewsEntity;
 //# sourceMappingURL=news.entity.js.map

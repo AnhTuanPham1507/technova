@@ -1,30 +1,49 @@
+import { EnvConfigService } from "@modules/shared/services/api-config.service";
+import { SharedModule } from "@modules/shared/shared.module";
 import { Module } from "@nestjs/common";
+import { TypeOrmModule } from "@nestjs/typeorm";
 import { v2 as cloudinary } from 'cloudinary';
+import { ImageController } from "./controllers/image.controller";
+import { ImageEntity } from "./database/entities/image.entity";
+import { ImageRepository } from "./database/repositories/image.repository";
 import { CloudinaryService } from "./services/cloudinary.service";
-
+import { ImageService } from "./services/image.service";
 @Module({
-    imports:[],
+    imports:[
+        TypeOrmModule.forFeature([
+            ImageEntity
+        ])
+    ],
     providers: [
         {
             provide: 'CLOUDINARY',
             useFactory: () => {
               return cloudinary.config({
-                  cloud_name: process.env.CLOUDINARY_NAME,
-                  api_key: process.env.CLOUDINARY_API_KEY,
-                  api_secret:
-                    process.env.CLOUDINARY_API_SECRET,
+                  cloud_name: 'quanglong1150',
+                  api_key: '527374515711284',
+                  api_secret: '2kA3NFsnfQyHcPkLoVjBjCsMhCo'
               });
             },
         },
         {
+            provide: 'IImageRepository',
+            useClass: ImageRepository
+        },
+        {
             provide: 'ICloudinaryService',
             useClass: CloudinaryService
+        },
+        {
+            provide: 'IImageService',
+            useClass: ImageService
         }
     ],
-    controllers: [],
+    controllers: [ImageController],
     exports: [
         'CLOUDINARY',
-        'ICloudinaryService'
+        'ICloudinaryService',
+        'IImageService',
+        'IImageRepository'
     ]
 })
 export class ImageModule {}

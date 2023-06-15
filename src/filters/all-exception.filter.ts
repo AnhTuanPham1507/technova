@@ -14,7 +14,7 @@ export class AllExceptionFilter implements ExceptionFilter {
   catch(exception: any, host: ArgumentsHost): void {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
-
+    console.log(exception)
     this.logger.error(
       `${exception.name}: ${exception.message}`,
       '',

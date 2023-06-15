@@ -13,14 +13,15 @@ exports.OrderEntity = void 0;
 const openapi = require("@nestjs/swagger");
 const abstract_entity_1 = require("../../../../common/abstract.entity");
 const order_status_enum_1 = require("../../../../constants/enums/order-status.enum");
-const employee_entity_1 = require("../../../users/database/entities/employee.entity");
-const user_entity_1 = require("../../../users/database/entities/user.entity");
+const employee_entity_1 = require("../../../clients/database/entities/employee.entity");
+const user_entity_1 = require("../../../clients/database/entities/user.entity");
+const class_validator_1 = require("class-validator");
 const typeorm_1 = require("typeorm");
 const order_detail_entity_1 = require("./order-detail.entity");
 const payment_entity_1 = require("./payment.entity");
 let OrderEntity = class OrderEntity extends abstract_entity_1.AbstractEntity {
     static _OPENAPI_METADATA_FACTORY() {
-        return { totalPrice: { required: true, type: () => Number }, receiptedDate: { required: true, type: () => Date }, status: { required: true, enum: require("../../../../constants/enums/order-status.enum").OrderStatusEnum }, isPaid: { required: true, type: () => Boolean }, user: { required: true, type: () => require("../../../users/database/entities/user.entity").UserEntity }, employee: { required: true, type: () => require("../../../users/database/entities/employee.entity").EmployeeEntity }, payment: { required: true, type: () => require("./payment.entity").PaymentEntity }, details: { required: true, type: () => [require("./order-detail.entity").OrderDetailEntity] } };
+        return { totalPrice: { required: true, type: () => Number }, status: { required: true, enum: require("../../../../constants/enums/order-status.enum").OrderStatusEnum }, isPaid: { required: true, type: () => Boolean }, customerName: { required: true, type: () => String }, phone: { required: true, type: () => String }, email: { required: true, type: () => String }, user: { required: true, type: () => require("../../../clients/database/entities/user.entity").UserEntity }, employee: { required: true, type: () => require("../../../clients/database/entities/employee.entity").EmployeeEntity }, payment: { required: true, type: () => require("./payment.entity").PaymentEntity }, details: { required: true, type: () => [require("./order-detail.entity").OrderDetailEntity] } };
     }
 };
 __decorate([
@@ -30,13 +31,6 @@ __decorate([
     }),
     __metadata("design:type", Number)
 ], OrderEntity.prototype, "totalPrice", void 0);
-__decorate([
-    (0, typeorm_1.Column)({
-        name: 'receipted_date',
-        type: 'timestamp with time zone'
-    }),
-    __metadata("design:type", Date)
-], OrderEntity.prototype, "receiptedDate", void 0);
 __decorate([
     (0, typeorm_1.Column)({
         name: 'status',
@@ -52,6 +46,29 @@ __decorate([
     }),
     __metadata("design:type", Boolean)
 ], OrderEntity.prototype, "isPaid", void 0);
+__decorate([
+    (0, typeorm_1.Column)({
+        name: 'customer_name',
+        length: 50
+    }),
+    __metadata("design:type", String)
+], OrderEntity.prototype, "customerName", void 0);
+__decorate([
+    (0, typeorm_1.Column)({
+        name: 'phone',
+        length: 15
+    }),
+    (0, class_validator_1.IsPhoneNumber)('VI'),
+    __metadata("design:type", String)
+], OrderEntity.prototype, "phone", void 0);
+__decorate([
+    (0, typeorm_1.Column)({
+        name: 'email',
+        length: 50
+    }),
+    (0, class_validator_1.IsEmail)(),
+    __metadata("design:type", String)
+], OrderEntity.prototype, "email", void 0);
 __decorate([
     (0, typeorm_1.ManyToOne)(() => user_entity_1.UserEntity, (user) => user.orders),
     (0, typeorm_1.JoinColumn)({ name: 'user_id' }),

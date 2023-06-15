@@ -15,24 +15,19 @@ const abstract_entity_1 = require("../../../../common/abstract.entity");
 const brand_entity_1 = require("../../../brands/database/entities/brand.entity");
 const category_entity_1 = require("../../../categories/database/entities/category.entity");
 const typeorm_1 = require("typeorm");
-const comment_entity_1 = require("./comment.entity");
 const discount_entity_1 = require("./discount.entity");
-const product_benefit_entity_1 = require("./product-benefit.entity");
 const product_package_entity_1 = require("./product-package.entity");
 const product_tag_entity_1 = require("./product-tag.entity");
-const review_entity_1 = require("./review.entity");
 let ProductEntity = class ProductEntity extends abstract_entity_1.AbstractEntity {
-    constructor(name, description, brand, category, tags, benefits) {
+    constructor(name, description, brand, category) {
         super();
         this.name = name;
         this.description = description;
         this.brand = brand;
         this.category = category;
-        this.benefits = benefits;
-        this.tags = tags;
     }
     static _OPENAPI_METADATA_FACTORY() {
-        return { name: { required: true, type: () => String }, description: { required: true, type: () => String }, brand: { required: true, type: () => require("../../../brands/database/entities/brand.entity").BrandEntity, nullable: true }, category: { required: true, type: () => require("../../../categories/database/entities/category.entity").CategoryEntity, nullable: true }, discount: { required: true, type: () => require("./discount.entity").DiscountEntity }, tags: { required: true, type: () => [require("./product-tag.entity").ProductTagEntity] }, benefits: { required: true, type: () => [require("./product-benefit.entity").ProductBenefitEntity] }, packages: { required: true, type: () => [require("./product-package.entity").ProductPackageEntity] }, reviews: { required: true, type: () => [require("./review.entity").ReviewEntity] }, comments: { required: true, type: () => [require("./comment.entity").CommentEntity] } };
+        return { name: { required: true, type: () => String }, description: { required: true, type: () => String }, brand: { required: true, type: () => require("../../../brands/database/entities/brand.entity").BrandEntity, nullable: true }, category: { required: true, type: () => require("../../../categories/database/entities/category.entity").CategoryEntity, nullable: true }, discount: { required: true, type: () => require("./discount.entity").DiscountEntity }, tags: { required: true, type: () => [require("./product-tag.entity").ProductTagEntity] }, packages: { required: true, type: () => [require("./product-package.entity").ProductPackageEntity] }, benefits: { required: true, type: () => [require("./product-package.entity").ProductPackageEntity] } };
     }
 };
 __decorate([
@@ -56,6 +51,7 @@ __decorate([
 ], ProductEntity.prototype, "brand", void 0);
 __decorate([
     (0, typeorm_1.ManyToOne)(() => category_entity_1.CategoryEntity, (category) => category.products),
+    (0, typeorm_1.JoinColumn)({ name: 'category_id' }),
     __metadata("design:type", Object)
 ], ProductEntity.prototype, "category", void 0);
 __decorate([
@@ -68,24 +64,16 @@ __decorate([
     __metadata("design:type", Array)
 ], ProductEntity.prototype, "tags", void 0);
 __decorate([
-    (0, typeorm_1.OneToMany)(() => product_benefit_entity_1.ProductBenefitEntity, (tag) => tag.product),
-    __metadata("design:type", Array)
-], ProductEntity.prototype, "benefits", void 0);
-__decorate([
     (0, typeorm_1.OneToMany)(() => product_package_entity_1.ProductPackageEntity, (p) => p.product),
     __metadata("design:type", Array)
 ], ProductEntity.prototype, "packages", void 0);
 __decorate([
-    (0, typeorm_1.OneToMany)(() => review_entity_1.ReviewEntity, (p) => p.product),
+    (0, typeorm_1.OneToMany)(() => product_package_entity_1.ProductPackageEntity, (b) => b.product),
     __metadata("design:type", Array)
-], ProductEntity.prototype, "reviews", void 0);
-__decorate([
-    (0, typeorm_1.OneToMany)(() => comment_entity_1.CommentEntity, (p) => p.product),
-    __metadata("design:type", Array)
-], ProductEntity.prototype, "comments", void 0);
+], ProductEntity.prototype, "benefits", void 0);
 ProductEntity = __decorate([
     (0, typeorm_1.Entity)({ name: 'product' }),
-    __metadata("design:paramtypes", [String, String, Object, Object, Array, Array])
+    __metadata("design:paramtypes", [String, String, brand_entity_1.BrandEntity, category_entity_1.CategoryEntity])
 ], ProductEntity);
 exports.ProductEntity = ProductEntity;
 //# sourceMappingURL=product.entity.js.map

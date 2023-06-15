@@ -8,33 +8,52 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ImageModule = void 0;
 const common_1 = require("@nestjs/common");
+const typeorm_1 = require("@nestjs/typeorm");
 const cloudinary_1 = require("cloudinary");
+const image_controller_1 = require("./controllers/image.controller");
+const image_entity_1 = require("./database/entities/image.entity");
+const image_repository_1 = require("./database/repositories/image.repository");
 const cloudinary_service_1 = require("./services/cloudinary.service");
+const image_service_1 = require("./services/image.service");
 let ImageModule = class ImageModule {
 };
 ImageModule = __decorate([
     (0, common_1.Module)({
-        imports: [],
+        imports: [
+            typeorm_1.TypeOrmModule.forFeature([
+                image_entity_1.ImageEntity
+            ])
+        ],
         providers: [
             {
                 provide: 'CLOUDINARY',
                 useFactory: () => {
                     return cloudinary_1.v2.config({
-                        cloud_name: process.env.CLOUDINARY_NAME,
-                        api_key: process.env.CLOUDINARY_API_KEY,
-                        api_secret: process.env.CLOUDINARY_API_SECRET,
+                        cloud_name: 'quanglong1150',
+                        api_key: '527374515711284',
+                        api_secret: '2kA3NFsnfQyHcPkLoVjBjCsMhCo'
                     });
                 },
             },
             {
+                provide: 'IImageRepository',
+                useClass: image_repository_1.ImageRepository
+            },
+            {
                 provide: 'ICloudinaryService',
                 useClass: cloudinary_service_1.CloudinaryService
+            },
+            {
+                provide: 'IImageService',
+                useClass: image_service_1.ImageService
             }
         ],
-        controllers: [],
+        controllers: [image_controller_1.ImageController],
         exports: [
             'CLOUDINARY',
-            'ICloudinaryService'
+            'ICloudinaryService',
+            'IImageService',
+            'IImageRepository'
         ]
     })
 ], ImageModule);

@@ -17,33 +17,55 @@ const common_1 = require("@nestjs/common");
 const product_entity_1 = require("../database/entities/product.entity");
 const product_dto_1 = require("../dtos/responses/product.dto");
 const my_moment_util_1 = require("../../../utils/my-moment.util");
+const update_image_dto_1 = require("../../images/dtos/requests/update-image.dto");
+const image_object_type_enum_1 = require("../../../constants/enums/image-object-type.enum");
+const query_type_enum_1 = require("../../../constants/enums/query-type.enum");
+const brand_dto_1 = require("../../brands/dtos/responses/brand.dto");
+const category_dto_1 = require("../../categories/dtos/responses/category.dto");
 let ProductService = class ProductService {
-    constructor(brandService, categoryService, productRepo, productBenefitRepo, productTagRepo) {
+    constructor(brandService, categoryService, productRepo, imageService) {
         this.brandService = brandService;
         this.categoryService = categoryService;
         this.productRepo = productRepo;
-        this.productBenefitRepo = productBenefitRepo;
-        this.productTagRepo = productTagRepo;
+        this.imageService = imageService;
     }
     async create(createProduct, userId) {
-        const { brandId, categoryId, benefitIds, tagIds, description, name } = createProduct;
+        const { brandId, categoryId, description, name, imageId, imageDescriptionIds } = createProduct;
         const brand = await this.brandService.getEntityById(brandId);
         const category = await this.categoryService.getEntityById(categoryId);
-        const benefits = await this.productBenefitRepo.getByIds(benefitIds);
-        const tags = await this.productTagRepo.getByIds(tagIds);
-        const product = new product_entity_1.ProductEntity(name, description, brand, category, tags, benefits);
+        const product = new product_entity_1.ProductEntity(name, description, brand, category);
         product.createdBy = userId;
         product.updatedBy = userId;
         const createdProduct = await this.productRepo.save(product);
-        const productDTO = new product_dto_1.ProductDTO(createdProduct);
+        const assignImage = Object.assign(new update_image_dto_1.UpdateImageDTO, {
+            imageIds: [imageId],
+            objectId: createdProduct.id,
+            objectType: image_object_type_enum_1.ImageObjectTypeEnum.PRODUCT
+        });
+        const images = await this.imageService.update(assignImage, userId);
+        const brandDTO = createdProduct.brand ? new brand_dto_1.BrandDTO(createdProduct.brand) : undefined;
+        const categoryDTO = createdProduct.category ? new category_dto_1.CategoryDTO(createdProduct.category) : undefined;
+        const productDTO = new product_dto_1.ProductDTO(createdProduct, brandDTO, categoryDTO, undefined, images[0]);
         return productDTO;
     }
-    getAll(pageOptions) {
-        return this.productRepo.getAll(pageOptions);
+    async getAll(pageOptions) {
+        const pageProductsDTO = await this.productRepo.getAll(pageOptions);
+        const mappedImageProducts = await Promise.all(pageProductsDTO.data.map(async (product) => {
+            const images = await this.imageService.getByObject(product.id, image_object_type_enum_1.ImageObjectTypeEnum.PRODUCT, query_type_enum_1.QueryTypeEnum.ALL);
+            product.image = images[0];
+            return product;
+        }));
+        pageProductsDTO.data = mappedImageProducts;
+        return pageProductsDTO;
     }
     async getById(id) {
         const foundProduct = await this.productRepo.getById(id);
-        const productDTO = new product_dto_1.ProductDTO(foundProduct);
+        const images = await this.imageService.getByObject(foundProduct.id, image_object_type_enum_1.ImageObjectTypeEnum.PRODUCT, query_type_enum_1.QueryTypeEnum.ALL);
+        const imageDTO = images[0];
+        const brandDTO = foundProduct.brand ? new brand_dto_1.BrandDTO(foundProduct.brand) : undefined;
+        const categoryDTO = foundProduct.category ? new category_dto_1.CategoryDTO(foundProduct.category) : undefined;
+        const productDTO = new product_dto_1.ProductDTO(foundProduct, brandDTO, categoryDTO);
+        productDTO.image = imageDTO;
         return productDTO;
     }
     async getByIds(ids) {
@@ -53,9 +75,20 @@ let ProductService = class ProductService {
     }
     async update(id, updateProduct, userId) {
         const foundProduct = await this.productRepo.getById(id);
-        const product = Object.assign(foundProduct, Object.assign(Object.assign({}, updateProduct), { updatedAt: my_moment_util_1.Moment.getCurrentDate(), updatedBy: userId }));
+        const brand = await this.brandService.getEntityById(updateProduct.brandId);
+        const category = await this.categoryService.getEntityById(updateProduct.categoryId);
+        const product = Object.assign(foundProduct, Object.assign(Object.assign({}, updateProduct), { brand,
+            category, updatedAt: my_moment_util_1.Moment.getCurrentDate(), updatedBy: userId }));
         const updatedProduct = await this.productRepo.save(product);
-        const productDTO = new product_dto_1.ProductDTO(updatedProduct);
+        const assignImage = Object.assign(new update_image_dto_1.UpdateImageDTO, {
+            imageIds: [updateProduct.imageId],
+            objectId: updatedProduct.id,
+            objectType: image_object_type_enum_1.ImageObjectTypeEnum.PRODUCT
+        });
+        const images = await this.imageService.update(assignImage, userId);
+        const brandDTO = updatedProduct.brand ? new brand_dto_1.BrandDTO(updatedProduct.brand) : undefined;
+        const categoryDTO = updatedProduct.category ? new category_dto_1.CategoryDTO(updatedProduct.category) : undefined;
+        const productDTO = new product_dto_1.ProductDTO(updatedProduct, brandDTO, categoryDTO, undefined, images[0]);
         return productDTO;
     }
     async delete(id, userId) {
@@ -71,9 +104,8 @@ ProductService = __decorate([
     __param(0, (0, common_1.Inject)((0, common_1.forwardRef)(() => 'IBrandService'))),
     __param(1, (0, common_1.Inject)('ICategoryService')),
     __param(2, (0, common_1.Inject)('IProductRepository')),
-    __param(3, (0, common_1.Inject)('IProductBenefitRepository')),
-    __param(4, (0, common_1.Inject)('IProductTagRepository')),
-    __metadata("design:paramtypes", [Object, Object, Object, Object, Object])
+    __param(3, (0, common_1.Inject)('IImageService')),
+    __metadata("design:paramtypes", [Object, Object, Object, Object])
 ], ProductService);
 exports.ProductService = ProductService;
 //# sourceMappingURL=product.service.js.map

@@ -1,3 +1,4 @@
+import { ImageModule } from "@modules/images/image.module";
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { CategoryController } from "./controllers/category.controller";
@@ -6,9 +7,12 @@ import { CategoryRepository } from "./database/repositories/category.repository"
 import { CategoryService } from "./services/category.service";
 
 @Module({
-    imports: [TypeOrmModule.forFeature([
-        CategoryEntity
-    ])],
+    imports: [
+        TypeOrmModule.forFeature([
+            CategoryEntity
+        ]),
+        ImageModule
+    ],
     providers: [
         {
             provide: 'ICategoryRepository',

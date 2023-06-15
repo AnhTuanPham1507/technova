@@ -15,7 +15,7 @@ const swagger_1 = require("@nestjs/swagger");
 const class_validator_1 = require("class-validator");
 class CreateProductDTO {
     static _OPENAPI_METADATA_FACTORY() {
-        return { name: { required: true, type: () => String }, description: { required: true, type: () => String }, brandId: { required: true, type: () => String }, categoryId: { required: true, type: () => String }, tagIds: { required: true, type: () => [String] }, benefitIds: { required: true, type: () => [String] } };
+        return { name: { required: true, type: () => String }, description: { required: true, type: () => String }, brandId: { required: true, type: () => String }, categoryId: { required: true, type: () => String }, imageId: { required: true, type: () => String }, imageDescriptionIds: { required: true, type: () => [String] } };
     }
 }
 __decorate([
@@ -38,32 +38,36 @@ __decorate([
 __decorate([
     (0, swagger_1.ApiProperty)({
         name: 'brandId',
-        type: 'ff852415-ff06-47d3-a33b-4ad4782cc664'
+        example: 'ff852415-ff06-47d3-a33b-4ad4782cc664'
     }),
+    (0, class_validator_1.IsUUID)(4),
     __metadata("design:type", String)
 ], CreateProductDTO.prototype, "brandId", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({
         name: 'categoryId',
-        type: 'ff852415-ff06-47d3-a33b-4ad4782cc664'
+        example: 'ff852415-ff06-47d3-a33b-4ad4782cc664'
     }),
+    (0, class_validator_1.IsUUID)(4),
     __metadata("design:type", String)
 ], CreateProductDTO.prototype, "categoryId", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({
-        name: 'tagIds',
-        isArray: true
+        name: 'imageId',
+        example: 'ff852415-ff06-47d3-a33b-4ad4782cc664'
     }),
-    (0, class_validator_1.IsArray)(),
-    __metadata("design:type", Array)
-], CreateProductDTO.prototype, "tagIds", void 0);
+    (0, class_validator_1.IsUUID)(4),
+    __metadata("design:type", String)
+], CreateProductDTO.prototype, "imageId", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({
-        name: 'benefitIds',
-        isArray: true
+        name: 'imageIds',
+        isArray: true,
+        example: ['ff852415-ff06-47d3-a33b-4ad4782cc664']
     }),
-    (0, class_validator_1.IsArray)(),
+    (0, class_validator_1.IsUUID)(4, { each: true }),
+    (0, class_validator_1.IsOptional)(),
     __metadata("design:type", Array)
-], CreateProductDTO.prototype, "benefitIds", void 0);
+], CreateProductDTO.prototype, "imageDescriptionIds", void 0);
 exports.CreateProductDTO = CreateProductDTO;
 //# sourceMappingURL=create-product.dto.js.map

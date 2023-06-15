@@ -12,12 +12,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreateCategoryDTO = void 0;
 const openapi = require("@nestjs/swagger");
 const swagger_1 = require("@nestjs/swagger");
+const class_validator_1 = require("class-validator");
 class CreateCategoryDTO {
-    constructor(category) {
-        this.name = category.name;
-    }
     static _OPENAPI_METADATA_FACTORY() {
-        return { name: { required: true, type: () => String } };
+        return { name: { required: true, type: () => String }, imageId: { required: true, type: () => String } };
     }
 }
 __decorate([
@@ -25,7 +23,15 @@ __decorate([
         name: 'name',
         example: 'Phần mềm'
     }),
+    (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], CreateCategoryDTO.prototype, "name", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({
+        name: 'imageId',
+    }),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CreateCategoryDTO.prototype, "imageId", void 0);
 exports.CreateCategoryDTO = CreateCategoryDTO;
 //# sourceMappingURL=create-category.dto.js.map

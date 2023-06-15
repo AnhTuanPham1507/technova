@@ -8,7 +8,7 @@ export class DiscountDTO extends AbstractDTO {
         name: 'percent',
         type: 'float'
     })
-    discountPercent: number;
+    discount: number;
 
     @ApiProperty({
         name: 'status',

@@ -16,7 +16,7 @@ const discount_status_enum_1 = require("../../../../constants/enums/discount-sta
 const swagger_1 = require("@nestjs/swagger");
 class DiscountDTO extends abstract_dto_1.AbstractDTO {
     static _OPENAPI_METADATA_FACTORY() {
-        return { discountPercent: { required: true, type: () => Number }, status: { required: true, enum: require("../../../../constants/enums/discount-status.enum").discountStatusEnum }, expiredDate: { required: true, type: () => Date } };
+        return { discount: { required: true, type: () => Number }, status: { required: true, enum: require("../../../../constants/enums/discount-status.enum").discountStatusEnum }, expiredDate: { required: true, type: () => Date } };
     }
 }
 __decorate([
@@ -25,7 +25,7 @@ __decorate([
         type: 'float'
     }),
     __metadata("design:type", Number)
-], DiscountDTO.prototype, "discountPercent", void 0);
+], DiscountDTO.prototype, "discount", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({
         name: 'status',

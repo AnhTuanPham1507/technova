@@ -16,13 +16,27 @@ import { CategoryModule } from '@modules/categories/category.module';
 import { SharedModule } from '@modules/shared/shared.module';
 import { EnvConfigService } from '@modules/shared/services/api-config.service';
 import { BullModule } from '@nestjs/bull';
+import { ImageModule } from '@modules/images/image.module';
+import { CronjobModule } from '@modules/cronjob/cronjob.module';
+import { AboutCompanyModule } from '@modules/about-company/about-company.module';
+import { NewsModule } from '@modules/news/news.module';
+import { SolutionModule } from '@modules/solution/solution.module';
+import { AuthModule } from '@modules/auth/auth.module';
+import { ClientModule } from '@modules/clients/client.module';
 
 @Module({
   imports: [
     ProductModule,
     BrandModule,
     CategoryModule,
+    ImageModule,
     ScheduleModule.forRoot(),
+    CronjobModule,
+    AboutCompanyModule,
+    NewsModule,
+    SolutionModule,
+    AuthModule,
+    ClientModule,
     ConfigModule.load(path.resolve(__dirname, 'config', '**/!(*.d).{ts,js}')),
     TypeOrmModule.forRootAsync({
       imports: [SharedModule],

@@ -13,16 +13,53 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ImageService = void 0;
+const my_moment_util_1 = require("../../../utils/my-moment.util");
 const common_1 = require("@nestjs/common");
+const image_entity_1 = require("../database/entities/image.entity");
+const image_dto_1 = require("../dtos/responses/image.dto");
 let ImageService = class ImageService {
-    constructor(cloudinaryService) {
+    constructor(cloudinaryService, imageRepo) {
         this.cloudinaryService = cloudinaryService;
+        this.imageRepo = imageRepo;
+    }
+    getAllEntity() {
+        return this.imageRepo.getAll();
+    }
+    async getByObject(objectId, objectType, queryType) {
+        const images = await this.imageRepo.getByObjectId(objectId, objectType, queryType);
+        return images.map(image => new image_dto_1.ImageDTO(image));
+    }
+    async create(createImage, userId) {
+        const result = await this.cloudinaryService.uploadFiles(createImage);
+        const images = result.map(item => new image_entity_1.ImageEntity(`${item.resource_type}/${item.format}`, item.secure_url, item.public_id, userId));
+        const createImages = await this.imageRepo.saveMany(images);
+        const imagesDTO = createImages.map(image => new image_dto_1.ImageDTO(image));
+        return imagesDTO;
+    }
+    async update(updateImage, userId) {
+        const foundImages = await this.imageRepo.getByIds(updateImage.imageIds);
+        const updateImages = foundImages.map(image => Object.assign(image, {
+            objectId: updateImage.objectId,
+            objectType: updateImage.objectType,
+            updatedBy: userId,
+            updatedAt: my_moment_util_1.Moment.getCurrentDate()
+        }));
+        console.log(updateImages);
+        const images = await this.imageRepo.saveMany(updateImages);
+        const imagesDTO = images.map(image => new image_dto_1.ImageDTO(image));
+        return imagesDTO;
+    }
+    async delete(imageId) {
+        const foundImage = await this.imageRepo.getById(imageId);
+        await this.cloudinaryService.deleteFile(foundImage.cloudinaryId);
+        await this.imageRepo.delete(imageId);
     }
 };
 ImageService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, common_1.Inject)('ICloudinaryService')),
-    __metadata("design:paramtypes", [Object])
+    __param(1, (0, common_1.Inject)('IImageRepository')),
+    __metadata("design:paramtypes", [Object, Object])
 ], ImageService);
 exports.ImageService = ImageService;
 //# sourceMappingURL=image.service.js.map

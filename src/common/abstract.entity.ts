@@ -48,12 +48,14 @@ export abstract class AbstractEntity {
   deletedAt?: Date;
 
   @Column({
-    name: 'created_by'
+    name: 'created_by',
+    nullable: true
   })
   createdBy: string;
 
   @Column({
-    name: 'updated_by'
+    name: 'updated_by',
+    nullable: true
   })
   updatedBy: string;
 

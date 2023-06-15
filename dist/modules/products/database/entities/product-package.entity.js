@@ -13,15 +13,33 @@ exports.ProductPackageEntity = void 0;
 const openapi = require("@nestjs/swagger");
 const abstract_entity_1 = require("../../../../common/abstract.entity");
 const currency_enum_1 = require("../../../../constants/enums/currency.enum");
+const time_range_enum_1 = require("../../../../constants/enums/time-range.enum");
 const order_detail_entity_1 = require("../../../orders/database/entities/order-detail.entity");
 const typeorm_1 = require("typeorm");
-const product_benefit_entity_1 = require("./product-benefit.entity");
+const benefit_value_entity_1 = require("./benefit-value.entity");
 const product_entity_1 = require("./product.entity");
 let ProductPackageEntity = class ProductPackageEntity extends abstract_entity_1.AbstractEntity {
+    constructor(name, price, currency, userNumber, timeRange, timeRangeNumber, product) {
+        super();
+        this.name = name;
+        this.price = price;
+        this.currency = currency;
+        this.product = product;
+        this.userNumber = userNumber;
+        this.timeRange = timeRange;
+        this.timeRangeNumber = timeRangeNumber;
+    }
     static _OPENAPI_METADATA_FACTORY() {
-        return { price: { required: true, type: () => Number }, currency: { required: true, enum: require("../../../../constants/enums/currency.enum").CurrencyEnum }, timeRange: { required: true, type: () => Date }, inStockQuantity: { required: true, type: () => Number }, product: { required: true, type: () => require("./product.entity").ProductEntity }, benefits: { required: true, type: () => [require("./product-benefit.entity").ProductBenefitEntity] }, orderDetails: { required: true, type: () => [require("../../../orders/database/entities/order-detail.entity").OrderDetailEntity] } };
+        return { name: { required: true, type: () => String }, price: { required: true, type: () => Number }, currency: { required: true, enum: require("../../../../constants/enums/currency.enum").CurrencyEnum }, userNumber: { required: true, type: () => Number }, timeRange: { required: true, enum: require("../../../../constants/enums/time-range.enum").TimeRangeEnum }, timeRangeNumber: { required: true, type: () => Number }, product: { required: true, type: () => require("./product.entity").ProductEntity }, benefitValues: { required: true, type: () => [require("./benefit-value.entity").BenefitValueEntity] }, orderDetails: { required: true, type: () => [require("../../../orders/database/entities/order-detail.entity").OrderDetailEntity] } };
     }
 };
+__decorate([
+    (0, typeorm_1.Column)({
+        name: 'name',
+        length: 50
+    }),
+    __metadata("design:type", String)
+], ProductPackageEntity.prototype, "name", void 0);
 __decorate([
     (0, typeorm_1.Column)({
         name: 'price',
@@ -39,32 +57,38 @@ __decorate([
 ], ProductPackageEntity.prototype, "currency", void 0);
 __decorate([
     (0, typeorm_1.Column)({
-        name: 'time_range',
-        type: 'timestamp with time zone'
+        name: 'user_number',
     }),
-    __metadata("design:type", Date)
+    __metadata("design:type", Number)
+], ProductPackageEntity.prototype, "userNumber", void 0);
+__decorate([
+    (0, typeorm_1.Column)({
+        name: 'time_range'
+    }),
+    __metadata("design:type", String)
 ], ProductPackageEntity.prototype, "timeRange", void 0);
 __decorate([
     (0, typeorm_1.Column)({
-        name: 'in_stock_quantity'
+        name: 'time_range_number'
     }),
     __metadata("design:type", Number)
-], ProductPackageEntity.prototype, "inStockQuantity", void 0);
+], ProductPackageEntity.prototype, "timeRangeNumber", void 0);
 __decorate([
     (0, typeorm_1.ManyToOne)(() => product_entity_1.ProductEntity, (product) => product.packages),
     (0, typeorm_1.JoinColumn)({ name: 'product_id' }),
     __metadata("design:type", product_entity_1.ProductEntity)
 ], ProductPackageEntity.prototype, "product", void 0);
 __decorate([
-    (0, typeorm_1.ManyToMany)(() => product_benefit_entity_1.ProductBenefitEntity, (b) => b.packages),
+    (0, typeorm_1.OneToMany)(() => benefit_value_entity_1.BenefitValueEntity, (b) => b.productPackage),
     __metadata("design:type", Array)
-], ProductPackageEntity.prototype, "benefits", void 0);
+], ProductPackageEntity.prototype, "benefitValues", void 0);
 __decorate([
     (0, typeorm_1.OneToMany)(() => order_detail_entity_1.OrderDetailEntity, (d) => d.productPackage),
     __metadata("design:type", Array)
 ], ProductPackageEntity.prototype, "orderDetails", void 0);
 ProductPackageEntity = __decorate([
-    (0, typeorm_1.Entity)({ name: 'product_package' })
+    (0, typeorm_1.Entity)({ name: 'product_package' }),
+    __metadata("design:paramtypes", [String, Number, String, Number, String, Number, product_entity_1.ProductEntity])
 ], ProductPackageEntity);
 exports.ProductPackageEntity = ProductPackageEntity;
 //# sourceMappingURL=product-package.entity.js.map

@@ -1,7 +1,8 @@
 import { AbstractEntity } from "@common/abstract.entity";
 import { OrderStatusEnum } from "@constants/enums/order-status.enum";
-import { EmployeeEntity } from "@modules/users/database/entities/employee.entity";
-import { UserEntity } from "@modules/users/database/entities/user.entity";
+import { EmployeeEntity } from "@modules/clients/database/entities/employee.entity";
+import { UserEntity } from "@modules/clients/database/entities/user.entity";
+import { IsEmail, IsPhoneNumber } from "class-validator";
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne } from "typeorm";
 import { OrderDetailEntity } from "./order-detail.entity";
 import { PaymentEntity } from "./payment.entity";
@@ -16,12 +17,6 @@ export class OrderEntity extends AbstractEntity {
     totalPrice: number;
 
     @Column({
-        name: 'receipted_date',
-        type: 'timestamp with time zone'
-    })
-    receiptedDate: Date;
-
-    @Column({
         name: 'status',
         type: 'enum',
         enum: OrderStatusEnum
@@ -33,6 +28,26 @@ export class OrderEntity extends AbstractEntity {
         name: 'is_paid'
     })
     isPaid: boolean;
+
+    @Column({
+        name: 'customer_name',
+        length: 50
+    })
+    customerName: string;
+
+    @Column({
+        name: 'phone',
+        length: 15
+    })
+    @IsPhoneNumber('VI')
+    phone: string;
+
+     @Column({
+        name: 'email',
+        length: 50
+    })
+    @IsEmail()
+    email: string;
 
     @ManyToOne(
         () => UserEntity,

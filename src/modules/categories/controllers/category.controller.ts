@@ -1,3 +1,5 @@
+import { PageOptionsDTO } from "@common/dtos/requests/page-options.dto";
+import { PageDTO } from "@common/dtos/responses/page.dto";
 import { QueryTypeEnum } from "@constants/enums/query-type.enum";
 import { Body, Controller, Delete, Get, HttpStatus, Inject, Param, Post, Put, Query } from "@nestjs/common";
 import { ApiBearerAuth, ApiBody, ApiNotFoundResponse, ApiOkResponse, ApiResponse, ApiTags, ApiUnauthorizedResponse } from "@nestjs/swagger";
@@ -30,9 +32,9 @@ export class CategoryController {
     description: 'Internal server errors.',
   })
   getCategoryList(
-    @Query('queryType') queryType: QueryTypeEnum
-  ): Promise<CategoryDTO[]> {
-    return this.categoryService.getAll(queryType);
+    @Query() pageOptionsDTO: PageOptionsDTO
+  ): Promise<PageDTO<CategoryDTO>> {
+    return this.categoryService.getAll(pageOptionsDTO);
   }
 
   @Get('/:id')

@@ -13,22 +13,60 @@ exports.ProductPackageDTO = void 0;
 const openapi = require("@nestjs/swagger");
 const abstract_dto_1 = require("../../../../common/dtos/abstract.dto");
 const currency_enum_1 = require("../../../../constants/enums/currency.enum");
+const time_range_enum_1 = require("../../../../constants/enums/time-range.enum");
 const swagger_1 = require("@nestjs/swagger");
+const benefit_value_dto_1 = require("./benefit-value.dto");
+const product_dto_1 = require("./product.dto");
 class ProductPackageDTO extends abstract_dto_1.AbstractDTO {
-    constructor(productPackage) {
+    constructor(productPackage, benefitValuesDTO, productDTO) {
         super(productPackage);
-        this.currency = productPackage.currency;
-        this.inStockQuantity = productPackage.inStockQuantity;
+        this.name = productPackage.name;
+        this.userNumber = productPackage.userNumber;
         this.timeRange = productPackage.timeRange;
+        this.timeRangeNumber = productPackage.timeRangeNumber;
+        this.price = productPackage.price;
+        this.currency = productPackage.currency;
+        this.product = productDTO;
+        this.benefitValues = benefitValuesDTO;
     }
     static _OPENAPI_METADATA_FACTORY() {
-        return { price: { required: true, type: () => Number }, currency: { required: true, enum: require("../../../../constants/enums/currency.enum").CurrencyEnum }, timeRange: { required: true, type: () => Date }, inStockQuantity: { required: true, type: () => Number } };
+        return { name: { required: true, type: () => String }, userNumber: { required: true, type: () => Number }, timeRangeNumber: { required: true, type: () => Number }, timeRange: { required: true, enum: require("../../../../constants/enums/time-range.enum").TimeRangeEnum }, price: { required: true, type: () => Number }, currency: { required: true, enum: require("../../../../constants/enums/currency.enum").CurrencyEnum }, product: { required: false, type: () => require("./product.dto").ProductDTO }, benefitValues: { required: false, type: () => [require("./benefit-value.dto").BenefitValueDTO] } };
     }
 }
 __decorate([
     (0, swagger_1.ApiProperty)({
+        name: 'name',
+        example: 'free'
+    }),
+    __metadata("design:type", String)
+], ProductPackageDTO.prototype, "name", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({
+        name: 'userNumber',
+        example: 1
+    }),
+    __metadata("design:type", Number)
+], ProductPackageDTO.prototype, "userNumber", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({
+        name: 'timeRange',
+        example: 1
+    }),
+    __metadata("design:type", Number)
+], ProductPackageDTO.prototype, "timeRangeNumber", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({
         name: 'price',
-        type: 'float'
+        type: 'enum',
+        enum: time_range_enum_1.TimeRangeEnum,
+        example: time_range_enum_1.TimeRangeEnum.DAY
+    }),
+    __metadata("design:type", String)
+], ProductPackageDTO.prototype, "timeRange", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({
+        name: 'price',
+        example: 300000
     }),
     __metadata("design:type", Number)
 ], ProductPackageDTO.prototype, "price", void 0);
@@ -36,22 +74,25 @@ __decorate([
     (0, swagger_1.ApiProperty)({
         name: 'currency',
         type: 'enum',
-        enum: currency_enum_1.CurrencyEnum
+        enum: currency_enum_1.CurrencyEnum,
+        example: currency_enum_1.CurrencyEnum.vnd
     }),
     __metadata("design:type", String)
 ], ProductPackageDTO.prototype, "currency", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({
-        name: 'timeRange',
-        type: 'timestamp with time zone'
+        name: 'product',
+        type: product_dto_1.ProductDTO
     }),
-    __metadata("design:type", Date)
-], ProductPackageDTO.prototype, "timeRange", void 0);
+    __metadata("design:type", product_dto_1.ProductDTO)
+], ProductPackageDTO.prototype, "product", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({
-        name: 'inStockQuantity'
+        name: 'benefitValues',
+        type: benefit_value_dto_1.BenefitValueDTO,
+        isArray: true
     }),
-    __metadata("design:type", Number)
-], ProductPackageDTO.prototype, "inStockQuantity", void 0);
+    __metadata("design:type", Array)
+], ProductPackageDTO.prototype, "benefitValues", void 0);
 exports.ProductPackageDTO = ProductPackageDTO;
 //# sourceMappingURL=product-package.dto.js.map

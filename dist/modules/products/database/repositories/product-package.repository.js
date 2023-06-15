@@ -22,14 +22,29 @@ let ProductPackageRepository = class ProductPackageRepository {
         this.productPackageRepo = productPackageRepo;
     }
     save(productPackage) {
-        return this.save(productPackage);
+        return this.productPackageRepo.save(productPackage);
     }
-    getByIds(ids) {
-        return this.productPackageRepo.find({
-            where: {
-                id: (0, typeorm_2.In)(ids)
-            }
+    getByProductId(id) {
+        const query = this.productPackageRepo.createQueryBuilder('productPackage');
+        query.leftJoinAndSelect('productPackage.product', 'product');
+        query.leftJoinAndSelect('productPackage.benefitValues', 'benefitValues');
+        query.withDeleted();
+        query.where('(productPackage.product = :productId)', {
+            productId: id,
         });
+        return query.getMany();
+    }
+    async getById(id) {
+        const productPackage = await this.productPackageRepo.findOne({
+            where: {
+                id
+            },
+            relations: ['benefitValues']
+        });
+        if (!productPackage) {
+            throw new common_1.NotFoundException(`Product package with id ${id} can't be found`);
+        }
+        return productPackage;
     }
 };
 ProductPackageRepository = __decorate([

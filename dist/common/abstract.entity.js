@@ -45,13 +45,15 @@ __decorate([
 ], AbstractEntity.prototype, "deletedAt", void 0);
 __decorate([
     (0, typeorm_1.Column)({
-        name: 'created_by'
+        name: 'created_by',
+        nullable: true
     }),
     __metadata("design:type", String)
 ], AbstractEntity.prototype, "createdBy", void 0);
 __decorate([
     (0, typeorm_1.Column)({
-        name: 'updated_by'
+        name: 'updated_by',
+        nullable: true
     }),
     __metadata("design:type", String)
 ], AbstractEntity.prototype, "updatedBy", void 0);

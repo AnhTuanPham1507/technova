@@ -25,6 +25,13 @@ const category_module_1 = require("./modules/categories/category.module");
 const shared_module_1 = require("./modules/shared/shared.module");
 const api_config_service_1 = require("./modules/shared/services/api-config.service");
 const bull_1 = require("@nestjs/bull");
+const image_module_1 = require("./modules/images/image.module");
+const cronjob_module_1 = require("./modules/cronjob/cronjob.module");
+const about_company_module_1 = require("./modules/about-company/about-company.module");
+const news_module_1 = require("./modules/news/news.module");
+const solution_module_1 = require("./modules/solution/solution.module");
+const auth_module_1 = require("./modules/auth/auth.module");
+const client_module_1 = require("./modules/clients/client.module");
 let AppModule = class AppModule {
     configure(consumer) {
         consumer
@@ -39,7 +46,14 @@ AppModule = __decorate([
             product_module_1.ProductModule,
             brand_module_1.BrandModule,
             category_module_1.CategoryModule,
+            image_module_1.ImageModule,
             schedule_1.ScheduleModule.forRoot(),
+            cronjob_module_1.CronjobModule,
+            about_company_module_1.AboutCompanyModule,
+            news_module_1.NewsModule,
+            solution_module_1.SolutionModule,
+            auth_module_1.AuthModule,
+            client_module_1.ClientModule,
             nestjs_config_1.ConfigModule.load(path_1.default.resolve(__dirname, 'config', '**/!(*.d).{ts,js}')),
             typeorm_1.TypeOrmModule.forRootAsync({
                 imports: [shared_module_1.SharedModule],

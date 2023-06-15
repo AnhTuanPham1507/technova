@@ -13,7 +13,11 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BrandRepository = void 0;
+const page_meta_dto_1 = require("../../../../common/dtos/responses/page-meta.dto");
+const page_dto_1 = require("../../../../common/dtos/responses/page.dto");
 const query_type_enum_1 = require("../../../../constants/enums/query-type.enum");
+const brand_dto_1 = require("../../dtos/responses/brand.dto");
+const product_dto_1 = require("../../../products/dtos/responses/product.dto");
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
@@ -36,9 +40,16 @@ let BrandRepository = class BrandRepository {
     save(brand) {
         return this.brandRepo.save(brand);
     }
-    getAll(queryType) {
+    async getAll(pageOptionsDTO) {
         const query = this.brandRepo.createQueryBuilder('brand');
-        switch (queryType) {
+        query.leftJoinAndSelect('brand.products', 'products');
+        query.withDeleted();
+        if (pageOptionsDTO.q && pageOptionsDTO.q.length > 0) {
+            query.andWhere('(brand.name ILIKE :q)', {
+                q: `%${pageOptionsDTO.q}%`,
+            });
+        }
+        switch (pageOptionsDTO.queryType) {
             case query_type_enum_1.QueryTypeEnum.ALL:
                 break;
             case query_type_enum_1.QueryTypeEnum.ACTIVATE:
@@ -48,7 +59,14 @@ let BrandRepository = class BrandRepository {
                 query.andWhere('brand.deleted_at is not null');
                 break;
         }
-        return query.getMany();
+        query.orderBy(`brand.${pageOptionsDTO.orderBy}`, pageOptionsDTO.order);
+        query.skip(pageOptionsDTO.skip);
+        query.take(pageOptionsDTO.take);
+        const itemCount = await query.getCount();
+        const result = await query.getMany();
+        const brandsDTO = result.map((it) => new brand_dto_1.BrandDTO(it, undefined, it.products.map(item => new product_dto_1.ProductDTO(item))));
+        const pageMetaDto = new page_meta_dto_1.PageMetaDTO({ pageOptionsDTO, itemCount });
+        return new page_dto_1.PageDTO(brandsDTO, pageMetaDto);
     }
 };
 BrandRepository = __decorate([

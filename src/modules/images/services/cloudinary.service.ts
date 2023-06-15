@@ -6,11 +6,13 @@ import streamifier from 'streamifier';
 export type CloudinaryResponse = UploadApiResponse | UploadApiErrorResponse;
 
 export interface ICloudinaryService {
-    uploadFiles(files: Express.Multer.File[]): Promise<CloudinaryResponse[]>;
+  uploadFiles(files: Express.Multer.File[]): Promise<CloudinaryResponse[]>;
+  deleteFile(cloudinaryId: string): Promise<any>;
 }
 
 @Injectable()
 export class CloudinaryService implements ICloudinaryService{
+  constructor(){}
 
   uploadFiles(files: Express.Multer.File[]): Promise<CloudinaryResponse[]>{
     const uploadImagePromises = files.map(file => new Promise<CloudinaryResponse>(
@@ -27,5 +29,9 @@ export class CloudinaryService implements ICloudinaryService{
     ));
 
     return Promise.all(uploadImagePromises)
+  }
+
+  deleteFile(cloudinaryId: string): Promise<any> {
+    return cloudinary.uploader.destroy(cloudinaryId);
   }
 }

@@ -9,7 +9,7 @@ exports.default = {
     enableDocument: (0, utils_1.getConfig)('APP_ENABLE_DOCUMENTATION', true),
     timezone: (0, utils_1.getConfig)('APP_TZ', 'UTC'),
     corsOrigins: (0, utils_1.getConfig)('APP_CORS_ORIGINS'),
-    flushCacheUser: (0, utils_1.getConfig)('APP_FLUSH_CACHE_USER'),
-    flushCachePassword: (0, utils_1.getConfig)('APP_FLUSH_CACHE_PASSWORD'),
+    jwtSecretKey: (0, utils_1.getConfig)('APP_JWT_SECRET_KEY'),
+    jwtExpiresIn: (0, utils_1.getConfig)('APP_JWT_EXPIRES_IN')
 };
 //# sourceMappingURL=app.js.map

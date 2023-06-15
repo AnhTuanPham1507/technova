@@ -1,12 +1,20 @@
 import { AbstractEntity } from "@common/abstract.entity";
 import { CurrencyEnum } from "@constants/enums/currency.enum";
+import { TimeRangeEnum } from "@constants/enums/time-range.enum";
 import { OrderDetailEntity } from "@modules/orders/database/entities/order-detail.entity";
 import { Column, Entity, JoinColumn, ManyToMany, ManyToOne, OneToMany } from "typeorm";
+import { BenefitValueEntity } from "./benefit-value.entity";
 import { ProductBenefitEntity } from "./product-benefit.entity";
 import { ProductEntity } from "./product.entity";
 
 @Entity({name: 'product_package'})
 export class ProductPackageEntity extends AbstractEntity {
+
+    @Column({
+        name: 'name',
+        length: 50
+    })
+    name: string;
 
     @Column({
         name: 'price',
@@ -22,15 +30,19 @@ export class ProductPackageEntity extends AbstractEntity {
     currency: CurrencyEnum;
 
     @Column({
-        name: 'time_range',
-        type: 'timestamp with time zone'
+        name: 'user_number',
     })
-    timeRange: Date;
+    userNumber: number;
 
     @Column({
-        name: 'in_stock_quantity'
+        name: 'time_range'
     })
-    inStockQuantity: number;
+    timeRange: TimeRangeEnum;
+
+    @Column({
+        name: 'time_range_number'
+    })
+    timeRangeNumber: number;
 
     @ManyToOne(
         () => ProductEntity,
@@ -39,15 +51,26 @@ export class ProductPackageEntity extends AbstractEntity {
     @JoinColumn({name: 'product_id'})
     product: ProductEntity;
 
-    @ManyToMany(
-        () => ProductBenefitEntity,
-        (b) => b.packages
+    @OneToMany(
+        () => BenefitValueEntity,
+        (b) => b.productPackage
     )
-    benefits: ProductBenefitEntity[];
+    benefitValues: BenefitValueEntity[];
 
     @OneToMany(
         () => OrderDetailEntity,
         (d) => d.productPackage
     )
     orderDetails: OrderDetailEntity[];
+
+    constructor(name: string, price: number, currency: CurrencyEnum, userNumber: number, timeRange: TimeRangeEnum, timeRangeNumber: number, product: ProductEntity){
+        super();
+        this.name = name;
+        this.price = price;
+        this.currency = currency;
+        this.product = product;
+        this.userNumber = userNumber;
+        this.timeRange = timeRange;
+        this.timeRangeNumber = timeRangeNumber;
+    }
 }

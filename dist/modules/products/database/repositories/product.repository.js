@@ -16,6 +16,8 @@ exports.ProductRepository = void 0;
 const page_meta_dto_1 = require("../../../../common/dtos/responses/page-meta.dto");
 const page_dto_1 = require("../../../../common/dtos/responses/page.dto");
 const query_type_enum_1 = require("../../../../constants/enums/query-type.enum");
+const brand_dto_1 = require("../../../brands/dtos/responses/brand.dto");
+const category_dto_1 = require("../../../categories/dtos/responses/category.dto");
 const product_dto_1 = require("../../dtos/responses/product.dto");
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
@@ -38,6 +40,12 @@ let ProductRepository = class ProductRepository {
                 q: `%${pageOptionsDTO.q}%`,
             });
         }
+        if (pageOptionsDTO.brandId) {
+            query.andWhere('brand.id = :brandId', { brandId: pageOptionsDTO.brandId });
+        }
+        if (pageOptionsDTO.categoryId) {
+            query.andWhere('brand.id = :categoryId', { categoryId: pageOptionsDTO.categoryId });
+        }
         switch (pageOptionsDTO.queryType) {
             case query_type_enum_1.QueryTypeEnum.ALL:
                 break;
@@ -48,12 +56,16 @@ let ProductRepository = class ProductRepository {
                 query.andWhere('product.deleted_at is not null');
                 break;
         }
-        query.orderBy(`moment.${pageOptionsDTO.orderBy}`, pageOptionsDTO.order);
+        query.orderBy(`product.${pageOptionsDTO.orderBy}`, pageOptionsDTO.order);
         query.skip(pageOptionsDTO.skip);
         query.take(pageOptionsDTO.take);
         const itemCount = await query.getCount();
         const result = await query.getMany();
-        const productDTO = result.map((it) => new product_dto_1.ProductDTO(it));
+        const productDTO = result.map((it) => {
+            const brandDTO = it.brand ? new brand_dto_1.BrandDTO(it.brand) : undefined;
+            const categoryDTO = it.category ? new category_dto_1.CategoryDTO(it.category) : undefined;
+            return new product_dto_1.ProductDTO(it, brandDTO, categoryDTO);
+        });
         const pageMetaDto = new page_meta_dto_1.PageMetaDTO({ pageOptionsDTO, itemCount });
         return new page_dto_1.PageDTO(productDTO, pageMetaDto);
     }
@@ -61,7 +73,8 @@ let ProductRepository = class ProductRepository {
         const product = await this.productRepo.findOne({
             where: {
                 id
-            }
+            },
+            relations: ['brand', 'category']
         });
         if (!product) {
             throw new common_1.NotFoundException(`Product with id ${id} can't be found`);

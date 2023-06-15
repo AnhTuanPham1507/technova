@@ -1,3 +1,4 @@
+import { ImageModule } from "@modules/images/image.module";
 import { ProductModule } from "@modules/products/product.module";
 import { forwardRef, Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
@@ -11,7 +12,8 @@ import { BrandService } from "./services/brand.service";
         TypeOrmModule.forFeature([
             BrandEntity
         ]),
-        forwardRef(() => ProductModule)
+        forwardRef(() => ProductModule),
+        ImageModule
     ],
     providers: [
         {

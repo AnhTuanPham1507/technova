@@ -2,12 +2,10 @@ import { AbstractEntity } from "@common/abstract.entity";
 import { BrandEntity } from "@modules/brands/database/entities/brand.entity";
 import { CategoryEntity } from "@modules/categories/database/entities/category.entity";
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne } from "typeorm";
-import { CommentEntity } from "./comment.entity";
 import { DiscountEntity } from "./discount.entity";
 import { ProductBenefitEntity } from "./product-benefit.entity";
 import { ProductPackageEntity } from "./product-package.entity";
 import { ProductTagEntity } from "./product-tag.entity";
-import { ReviewEntity } from "./review.entity";
 
 @Entity({name: 'product'})
 export class ProductEntity extends AbstractEntity {
@@ -34,6 +32,7 @@ export class ProductEntity extends AbstractEntity {
         () => CategoryEntity,
         (category) => category.products
     )
+    @JoinColumn({name: 'category_id'})
     category: CategoryEntity | null;
 
     @OneToOne(
@@ -50,37 +49,24 @@ export class ProductEntity extends AbstractEntity {
     tags: ProductTagEntity[];
 
     @OneToMany(
-        () => ProductBenefitEntity,
-        (tag) => tag.product
-    )
-    benefits: ProductBenefitEntity[];
-
-    @OneToMany(
         () => ProductPackageEntity,
         (p) => p.product
     )
     packages: ProductPackageEntity[];
 
     @OneToMany(
-        () => ReviewEntity,
-        (p) => p.product
+        () => ProductPackageEntity,
+        (b) => b.product
     )
-    reviews: ReviewEntity[];
+    benefits: ProductPackageEntity[];
 
-    @OneToMany(
-        () => CommentEntity,
-        (p) => p.product
-    )
-    comments: CommentEntity[];
 
-    constructor(name: string, description: string, brand: BrandEntity | null, category: CategoryEntity | null, tags: ProductTagEntity[], benefits: ProductBenefitEntity[]){
+    constructor(name: string, description: string, brand: BrandEntity, category: CategoryEntity){
         super();
         this.name = name;
         this.description = description;
         this.brand = brand;
         this.category = category;
-        this.benefits = benefits;
-        this.tags = tags;
     }
 }
 

@@ -19,6 +19,7 @@ let AllExceptionFilter = AllExceptionFilter_1 = class AllExceptionFilter {
     catch(exception, host) {
         const ctx = host.switchToHttp();
         const response = ctx.getResponse();
+        console.log(exception);
         this.logger.error(`${exception.name}: ${exception.message}`, '', AllExceptionFilter_1.name, '');
         if (exception instanceof common_1.HttpException) {
             const statusCode = exception.getStatus();

@@ -14,7 +14,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BrandController = void 0;
 const openapi = require("@nestjs/swagger");
-const query_type_enum_1 = require("../../../constants/enums/query-type.enum");
+const page_options_dto_1 = require("../../../common/dtos/requests/page-options.dto");
 const common_1 = require("@nestjs/common");
 const swagger_1 = require("@nestjs/swagger");
 const create_brand_dto_1 = require("../dtos/requests/create-brand.dto");
@@ -24,8 +24,8 @@ let BrandController = class BrandController {
     constructor(brandService) {
         this.brandService = brandService;
     }
-    getBrandList(queryType) {
-        return this.brandService.getAll(queryType);
+    getBrandList(pageOptionsDTO) {
+        return this.brandService.getAll(pageOptionsDTO);
     }
     getBrand(id) {
         return this.brandService.getById(id);
@@ -52,10 +52,10 @@ __decorate([
         status: common_1.HttpStatus.INTERNAL_SERVER_ERROR,
         description: 'Internal server errors.',
     }),
-    openapi.ApiResponse({ status: 200, type: [require("../dtos/responses/brand.dto").BrandDTO] }),
-    __param(0, (0, common_1.Query)('queryType')),
+    openapi.ApiResponse({ status: 200 }),
+    __param(0, (0, common_1.Query)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [page_options_dto_1.PageOptionsDTO]),
     __metadata("design:returntype", Promise)
 ], BrandController.prototype, "getBrandList", null);
 __decorate([

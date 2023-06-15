@@ -13,7 +13,6 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ImageRepository = void 0;
-const query_type_enum_1 = require("../../../../constants/enums/query-type.enum");
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
@@ -22,6 +21,9 @@ let ImageRepository = class ImageRepository {
     constructor(imageRepo) {
         this.imageRepo = imageRepo;
     }
+    getAll() {
+        return this.imageRepo.find({});
+    }
     async getById(id) {
         const image = await this.imageRepo.findOne({
             where: {
@@ -29,32 +31,33 @@ let ImageRepository = class ImageRepository {
             }
         });
         if (!image) {
-            throw new common_1.NotFoundException(`Cateogory with id ${id} can't be found`);
+            throw new common_1.NotFoundException(`Image with id ${id} can't be found`);
         }
         return image;
+    }
+    getByIds(ids) {
+        return this.imageRepo.find({
+            where: {
+                id: (0, typeorm_2.In)(ids)
+            }
+        });
     }
     save(image) {
         return this.imageRepo.save(image);
     }
-    getByObjectId(objectId, objectType, queryType) {
-        const query = this.imageRepo.createQueryBuilder('image');
-        query.where('image.object_id =:objectId', {
-            objectId
+    saveMany(images) {
+        return this.imageRepo.save(images);
+    }
+    getByObjectId(objectId, objectType) {
+        return this.imageRepo.find({
+            where: {
+                objectId,
+                objectType
+            }
         });
-        query.andWhere('image.object_type =:objectType', {
-            objectType
-        });
-        switch (queryType) {
-            case query_type_enum_1.QueryTypeEnum.ALL:
-                break;
-            case query_type_enum_1.QueryTypeEnum.ACTIVATE:
-                query.andWhere('image.deleted_at is null');
-                break;
-            case query_type_enum_1.QueryTypeEnum.DEACTIVATE:
-                query.andWhere('image.deleted_at is not null');
-                break;
-        }
-        return query.getMany();
+    }
+    delete(imageId) {
+        return this.imageRepo.delete(imageId);
     }
 };
 ImageRepository = __decorate([

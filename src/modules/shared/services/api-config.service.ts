@@ -77,6 +77,8 @@ export class EnvConfigService {
       tribeChannelName: this.configService.get(
         'app.tribeChannelName',
       ) as string,
+      jwtSecretKey: this.configService.get('app.jwtSecretKey') as string,
+      jwtExpiresIn: this.configService.get('app.jwtExpiresIn') as string
     };
   }
 
@@ -105,6 +107,14 @@ export class EnvConfigService {
   get releaseVersion() {
     return {
       releaseVersion: process.env.VERSION as string,
+    };
+  }
+
+  get cloudinary(){
+    return {
+      name: this.configService.get('cloudinary.name') as string,
+      apiKey: this.configService.get('cloudinary.apiKey') as string,
+      secretKey: this.configService.get('cloudinary.secretKey') as string,
     };
   }
 }

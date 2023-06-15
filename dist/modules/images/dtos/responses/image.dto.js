@@ -16,8 +16,15 @@ const image_object_type_enum_1 = require("../../../../constants/enums/image-obje
 const image_type_enum_1 = require("../../../../constants/enums/image-type.enum");
 const swagger_1 = require("@nestjs/swagger");
 class ImageDTO extends abstract_dto_1.AbstractDTO {
+    constructor(image) {
+        super(image);
+        this.type = image.type;
+        this.path = image.path;
+        this.objectId = image.objectId;
+        this.objectType = image.objectType;
+    }
     static _OPENAPI_METADATA_FACTORY() {
-        return { type: { required: true, type: () => String }, path: { required: true, type: () => String }, objectId: { required: true, type: () => String }, objectType: { required: true, enum: require("../../../../constants/enums/image-object-type.enum").ImageObjectTypeEnum } };
+        return { type: { required: true, type: () => String }, path: { required: true, type: () => String }, objectId: { required: false, type: () => String }, objectType: { required: false, enum: require("../../../../constants/enums/image-object-type.enum").ImageObjectTypeEnum } };
     }
 }
 __decorate([

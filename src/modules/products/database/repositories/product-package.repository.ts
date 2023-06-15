@@ -1,11 +1,12 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { In, Repository } from "typeorm";
+import {  Repository } from "typeorm";
 import { ProductPackageEntity } from "../entities/product-package.entity";
 
 export interface IProductPackageRepository {
-    getByIds(ids: string[]): Promise<ProductPackageEntity[]>;
+    getByProductId(id: string): Promise<ProductPackageEntity[]>;
     save(productPackage: ProductPackageEntity): Promise<ProductPackageEntity>;
+    getById(id: string): Promise<ProductPackageEntity>;
 }
 
 @Injectable()
@@ -16,14 +17,34 @@ export class ProductPackageRepository implements IProductPackageRepository{
     ){}
 
     save(productPackage: ProductPackageEntity): Promise<ProductPackageEntity>{
-        return this.save(productPackage);
+        return this.productPackageRepo.save(productPackage);
     }
 
-    getByIds(ids: string[]): Promise<ProductPackageEntity[]> {
-        return this.productPackageRepo.find({
+    getByProductId(id: string): Promise<ProductPackageEntity[]> {
+        const query = this.productPackageRepo.createQueryBuilder('productPackage');
+        query.leftJoinAndSelect('productPackage.product', 'product');
+        query.leftJoinAndSelect('productPackage.benefitValues', 'benefitValues')
+        query.withDeleted();
+
+        query.where('(productPackage.product = :productId)', {
+            productId: id,
+          });
+
+        return query.getMany();
+    }
+
+    async getById(id: string): Promise<ProductPackageEntity>{
+        const productPackage = await this.productPackageRepo.findOne({
             where: {
-                id: In(ids)
-            }
+                id
+            },
+            relations: ['benefitValues']
         })
+
+        if(!productPackage){
+            throw new NotFoundException(`Product package with id ${id} can't be found`)
+        }
+
+        return productPackage;
     }
 }

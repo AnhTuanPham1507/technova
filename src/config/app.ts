@@ -8,6 +8,6 @@ export default {
   enableDocument: getConfig('APP_ENABLE_DOCUMENTATION', true),
   timezone: getConfig('APP_TZ', 'UTC'),
   corsOrigins: getConfig('APP_CORS_ORIGINS'),
-  flushCacheUser: getConfig('APP_FLUSH_CACHE_USER'),
-  flushCachePassword: getConfig('APP_FLUSH_CACHE_PASSWORD'),
+  jwtSecretKey: getConfig('APP_JWT_SECRET_KEY'),
+  jwtExpiresIn: getConfig('APP_JWT_EXPIRES_IN')
 };

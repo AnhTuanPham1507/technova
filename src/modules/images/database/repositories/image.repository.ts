@@ -2,13 +2,17 @@ import { ImageObjectTypeEnum } from "@constants/enums/image-object-type.enum";
 import { QueryTypeEnum } from "@constants/enums/query-type.enum";
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { DeleteResult, In, Repository } from "typeorm";
 import { ImageEntity } from "../entities/image.entity";
 
 export interface IImageRepository {
+    getAll(): Promise<ImageEntity[]>;
     getById(id: string): Promise<ImageEntity>;
+    getByIds(ids: string[]): Promise<ImageEntity[]>;
     save(image: ImageEntity): Promise<ImageEntity>;
-    getByObjectId(objectId: string, objectType: ImageObjectTypeEnum, queryType: QueryTypeEnum): Promise<ImageEntity[]>
+    saveMany(images: ImageEntity[]): Promise<ImageEntity[]>;
+    getByObjectId(objectId: string, objectType: ImageObjectTypeEnum, queryType: QueryTypeEnum): Promise<ImageEntity[]>;
+    delete(imageId: string): Promise<DeleteResult>;
 }
 
 @Injectable()
@@ -17,6 +21,9 @@ export class ImageRepository implements IImageRepository {
         @InjectRepository(ImageEntity)
         private readonly imageRepo: Repository<ImageEntity>
     ){}
+    getAll(): Promise<ImageEntity[]> {
+        return this.imageRepo.find({});
+    }
 
     async getById(id: string): Promise<ImageEntity> {
         const image = await this.imageRepo.findOne({
@@ -26,37 +33,38 @@ export class ImageRepository implements IImageRepository {
         })
 
         if(!image){
-            throw new NotFoundException(`Cateogory with id ${id} can't be found`);
+            throw new NotFoundException(`Image with id ${id} can't be found`);
         }
 
         return image;
+    }
+
+    getByIds(ids: string[]): Promise<ImageEntity[]>{
+        return this.imageRepo.find({
+            where:{
+                id: In(ids)
+            }
+        })
     }
 
     save(image: ImageEntity): Promise<ImageEntity> {
         return this.imageRepo.save(image);
     }
 
-    getByObjectId(objectId: string, objectType: ImageObjectTypeEnum, queryType: QueryTypeEnum): Promise<ImageEntity[]> {
-        const query = this.imageRepo.createQueryBuilder('image');
-        
-        query.where('image.object_id =:objectId',{
-            objectId
-        });
-        query.andWhere('image.object_type =:objectType',{
-            objectType
-        });
+    saveMany(images: ImageEntity[]): Promise<ImageEntity[]>{
+        return this.imageRepo.save(images);
+    }
 
-        switch(queryType){
-            case QueryTypeEnum.ALL:
-              break;
-            case QueryTypeEnum.ACTIVATE:
-              query.andWhere('image.deleted_at is null');
-              break;
-            case QueryTypeEnum.DEACTIVATE:
-              query.andWhere('image.deleted_at is not null');
-              break;
-        }
+    getByObjectId(objectId: string, objectType: ImageObjectTypeEnum): Promise<ImageEntity[]> {
+        return this.imageRepo.find({
+            where: {
+                objectId,
+                objectType
+            }
+        })
+    }
 
-        return query.getMany();
+    delete(imageId: string): Promise<DeleteResult>{
+        return this.imageRepo.delete(imageId);
     }
 }

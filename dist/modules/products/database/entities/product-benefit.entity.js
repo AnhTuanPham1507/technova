@@ -13,11 +13,16 @@ exports.ProductBenefitEntity = void 0;
 const openapi = require("@nestjs/swagger");
 const abstract_entity_1 = require("../../../../common/abstract.entity");
 const typeorm_1 = require("typeorm");
-const product_package_entity_1 = require("./product-package.entity");
+const benefit_value_entity_1 = require("./benefit-value.entity");
 const product_entity_1 = require("./product.entity");
 let ProductBenefitEntity = class ProductBenefitEntity extends abstract_entity_1.AbstractEntity {
+    constructor(name, product) {
+        super();
+        this.name = name;
+        this.product = product;
+    }
     static _OPENAPI_METADATA_FACTORY() {
-        return { name: { required: true, type: () => String }, product: { required: true, type: () => require("./product.entity").ProductEntity }, packages: { required: true, type: () => [require("./product-package.entity").ProductPackageEntity] } };
+        return { name: { required: true, type: () => String }, benefitValues: { required: true, type: () => [require("./benefit-value.entity").BenefitValueEntity] }, product: { required: true, type: () => require("./product.entity").ProductEntity } };
     }
 };
 __decorate([
@@ -28,17 +33,17 @@ __decorate([
     __metadata("design:type", String)
 ], ProductBenefitEntity.prototype, "name", void 0);
 __decorate([
+    (0, typeorm_1.OneToMany)(() => benefit_value_entity_1.BenefitValueEntity, (b) => b.benefit),
+    __metadata("design:type", Array)
+], ProductBenefitEntity.prototype, "benefitValues", void 0);
+__decorate([
     (0, typeorm_1.ManyToOne)(() => product_entity_1.ProductEntity, (product) => product.benefits),
     (0, typeorm_1.JoinColumn)({ name: 'product_id' }),
     __metadata("design:type", product_entity_1.ProductEntity)
 ], ProductBenefitEntity.prototype, "product", void 0);
-__decorate([
-    (0, typeorm_1.ManyToMany)(() => product_package_entity_1.ProductPackageEntity, (p) => p.benefits),
-    (0, typeorm_1.JoinTable)(),
-    __metadata("design:type", Array)
-], ProductBenefitEntity.prototype, "packages", void 0);
 ProductBenefitEntity = __decorate([
-    (0, typeorm_1.Entity)({ name: 'product_benefit' })
+    (0, typeorm_1.Entity)({ name: 'product_benefit' }),
+    __metadata("design:paramtypes", [String, product_entity_1.ProductEntity])
 ], ProductBenefitEntity);
 exports.ProductBenefitEntity = ProductBenefitEntity;
 //# sourceMappingURL=product-benefit.entity.js.map

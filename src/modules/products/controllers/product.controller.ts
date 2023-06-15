@@ -3,9 +3,13 @@ import { Body, Controller, Delete, Get, HttpStatus, Inject, Param, Post, Put, Qu
 import { ApiBearerAuth, ApiBody, ApiNotFoundResponse, ApiOkResponse, ApiResponse, ApiTags, ApiUnauthorizedResponse } from "@nestjs/swagger";
 import { ProductDTO } from "../dtos/responses/product.dto";
 import { IProductService } from "../services/product.service";
-import { PageOptionsDTO } from "@common/dtos/requests/page-options.dto";
 import { CreateProductDTO } from "../dtos/requests/create-product.dto";
 import { UpdateProductDTO } from "../dtos/requests/update-product.dto";
+import { ProductBenefitDTO } from "../dtos/responses/product-benefit.dto";
+import { IProductBenefitService } from "../services/product-benefit.service";
+import { IProductPackageService } from "../services/product-package.service";
+import { ProductPackageDTO } from "../dtos/responses/product-package.dto";
+import { ProductPageOptionsDTO } from "../dtos/requests/product-page-option.dto";
 
 @Controller('/v1/product')
 @ApiTags('Product')
@@ -16,6 +20,10 @@ export class ProductController {
   constructor(
     @Inject('IProductService')
     private readonly productService: IProductService,
+    @Inject('IProductBenefitService')
+    private readonly productBenefitService: IProductBenefitService,
+    @Inject('IProductPackageService')
+    private readonly productPackageService: IProductPackageService,
   ) {}
 
   @Get('')
@@ -29,7 +37,7 @@ export class ProductController {
     description: 'Internal server errors.',
   })
   getProductList(
-    @Query() pageOptions: PageOptionsDTO
+    @Query() pageOptions: ProductPageOptionsDTO
   ): Promise<PageDTO<ProductDTO>> {
     return this.productService.getAll(pageOptions);
   }
@@ -51,6 +59,46 @@ export class ProductController {
     @Param('id') id: string,
   ): Promise<ProductDTO> {
     return this.productService.getById(id);
+  }
+
+  @Get('/:id/benefit')
+  @ApiOkResponse({
+    type: ProductBenefitDTO,
+    isArray: true,
+    description: 'Got product benefits successfully',
+  })
+  @ApiUnauthorizedResponse()
+  @ApiResponse({
+    status: HttpStatus.INTERNAL_SERVER_ERROR,
+    description: 'Internal server errors.',
+  })
+  @ApiNotFoundResponse({
+    description: 'Product with id ... can`t be found'
+  })
+  getProductBenefits(
+    @Param('id') id: string,
+  ): Promise<ProductBenefitDTO[]> {
+    return this.productBenefitService.getByProductId(id);
+  }
+
+  @Get('/:id/package')
+  @ApiOkResponse({
+    type: ProductPackageDTO,
+    isArray: true,
+    description: 'Got product benefits successfully',
+  })
+  @ApiUnauthorizedResponse()
+  @ApiResponse({
+    status: HttpStatus.INTERNAL_SERVER_ERROR,
+    description: 'Internal server errors.',
+  })
+  @ApiNotFoundResponse({
+    description: 'Product with id ... can`t be found'
+  })
+  getProductPackages(
+    @Param('id') id: string,
+  ): Promise<ProductPackageDTO[]> {
+    return this.productPackageService.getByProductId(id);
   }
 
   @Post('')
@@ -90,6 +138,7 @@ export class ProductController {
   ): Promise<ProductDTO> {
     return this.productService.update(id, body, 'test');
   }
+
 
   @Delete('/:id')
   @ApiOkResponse({

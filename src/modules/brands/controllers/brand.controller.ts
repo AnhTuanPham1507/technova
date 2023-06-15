@@ -1,4 +1,6 @@
 
+import { PageOptionsDTO } from "@common/dtos/requests/page-options.dto";
+import { PageDTO } from "@common/dtos/responses/page.dto";
 import { QueryTypeEnum } from "@constants/enums/query-type.enum";
 import { Body, Controller, Delete, Get, HttpStatus, Inject, Param, Post, Put, Query } from "@nestjs/common";
 import { ApiBearerAuth, ApiBody, ApiNotFoundResponse, ApiOkResponse, ApiResponse, ApiTags, ApiUnauthorizedResponse } from "@nestjs/swagger";
@@ -31,9 +33,9 @@ export class BrandController {
     description: 'Internal server errors.',
   })
   getBrandList(
-    @Query('queryType') queryType: QueryTypeEnum
-  ): Promise<BrandDTO[]> {
-    return this.brandService.getAll(queryType);
+    @Query() pageOptionsDTO: PageOptionsDTO
+  ): Promise<PageDTO<BrandDTO>> {
+    return this.brandService.getAll(pageOptionsDTO);
   }
 
   @Get('/:id')

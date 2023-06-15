@@ -1,11 +1,12 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { In, Repository } from "typeorm";
+import {  Repository } from "typeorm";
 import { ProductBenefitEntity } from "../entities/product-benefit.entity";
 
 export interface IProductBenefitRepository {
-    getByIds(ids: string[]): Promise<ProductBenefitEntity[]>;
+    getByProductId(id: string): Promise<ProductBenefitEntity[]>;
     save(productBenefit: ProductBenefitEntity): Promise<ProductBenefitEntity>;
+    getById(id: string): Promise<ProductBenefitEntity>;
 }
 
 @Injectable()
@@ -16,14 +17,35 @@ export class ProductBenefitRepository implements IProductBenefitRepository{
     ){}
 
     save(productBenefit: ProductBenefitEntity): Promise<ProductBenefitEntity>{
-        return this.save(productBenefit);
+        return this.productBenefitRepo.save(productBenefit);
     }
 
-    getByIds(ids: string[]): Promise<ProductBenefitEntity[]> {
-        return this.productBenefitRepo.find({
+    getByProductId(id: string): Promise<ProductBenefitEntity[]> {
+        const query = this.productBenefitRepo.createQueryBuilder('benefit');
+        query.leftJoinAndSelect('benefit.product', 'product');
+        query.leftJoinAndSelect('benefit.benefitValues', 'benefitValues')
+        query.leftJoinAndSelect('benefitValues.productPackage', 'productPackage')
+        query.withDeleted();
+
+        query.where('(benefit.product = :productId)', {
+            productId: id,
+          });
+
+        return query.getMany();
+    }
+
+    async getById(id: string): Promise<ProductBenefitEntity>{
+        const productBenefit = await this.productBenefitRepo.findOne({
             where: {
-                id: In(ids)
-            }
+                id
+            },
+            relations: ['benefitValues']
         })
+
+        if(!productBenefit){
+            throw new NotFoundException(`Product benefit with id ${id} can't be found`)
+        }
+
+        return productBenefit;
     }
 }

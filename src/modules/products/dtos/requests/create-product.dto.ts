@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsArray, IsString } from "class-validator";
+import { IsArray, IsOptional, IsString, IsUUID } from "class-validator";
 
 export class CreateProductDTO {
     @ApiProperty({
@@ -19,28 +19,32 @@ export class CreateProductDTO {
 
     @ApiProperty({
         name: 'brandId',
-        type: 'ff852415-ff06-47d3-a33b-4ad4782cc664'
+        example: 'ff852415-ff06-47d3-a33b-4ad4782cc664'
     })
+    @IsUUID(4)
     brandId: string;
 
     @ApiProperty({
         name: 'categoryId',
-        type: 'ff852415-ff06-47d3-a33b-4ad4782cc664'
+        example: 'ff852415-ff06-47d3-a33b-4ad4782cc664'
     })
+    @IsUUID(4)
     categoryId: string;
 
     @ApiProperty({
-        name: 'tagIds',
-        isArray: true
+        name: 'imageId',
+        example: 'ff852415-ff06-47d3-a33b-4ad4782cc664'
     })
-    @IsArray()
-    tagIds: string[];
+    @IsUUID(4)
+    imageId: string;
 
     @ApiProperty({
-        name: 'benefitIds',
-        isArray: true
+        name: 'imageIds',
+        isArray: true,
+        example: ['ff852415-ff06-47d3-a33b-4ad4782cc664']
     })
-    @IsArray()
-    benefitIds: string[];
+    @IsUUID(4,{each: true})
+    @IsOptional()
+    imageDescriptionIds: string[];
 
 }
