@@ -77,8 +77,6 @@ let EnvConfigService = class EnvConfigService {
             flushCachePassword: this.configService.get('app.flushCachePassword'),
             frontendUrl: this.configService.get('app.frontendUrl'),
             tribeChannelName: this.configService.get('app.tribeChannelName'),
-            jwtSecretKey: this.configService.get('app.jwtSecretKey'),
-            jwtExpiresIn: this.configService.get('app.jwtExpiresIn')
         };
     }
     get redisConfig() {
@@ -87,6 +85,25 @@ let EnvConfigService = class EnvConfigService {
             port: this.configService.get('redis.port'),
             ttl: this.configService.get('redis.ttl'),
             password: this.configService.get('redis.password'),
+        };
+    }
+    get momoConfig() {
+        return {
+            domain: this.configService.get('momo.domain'),
+            partnerCode: this.configService.get('momo.partnerCode'),
+            accessKey: this.configService.get('momo.accessKey'),
+            secretKey: this.configService.get('momo.secretKey'),
+            ipnUrl: this.configService.get('momo.ipnUrl'),
+            redirectUrl: this.configService.get('momo.redirectUrl'),
+        };
+    }
+    get mailConfig() {
+        return {
+            host: this.configService.get('mail.host'),
+            port: this.configService.get('mail.port'),
+            user: this.configService.get('mail.user'),
+            password: this.configService.get('mail.password'),
+            redirectUrl: this.configService.get('mail.redirectUrl')
         };
     }
     get rateLimitConfig() {

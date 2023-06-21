@@ -17,6 +17,11 @@ export class OrderDetailEntity extends AbstractEntity {
     })
     quantity: number;
 
+    @Column({
+        name: 'productName',
+    })
+    productName: string;
+
     @ManyToOne(
         () => ProductPackageEntity,
         (p) => p.orderDetails

@@ -29,21 +29,9 @@ export class HttpService {
 
   constructor(private axios: Axios) {}
 
-  private getAuthConfigAndHeaders(service: IHttpService) {
-    switch (service.getAuthType()) {
-      case 'basic':
-        return {
-          headers: {
-            ...service.getHeaders(),
-          },
-        };
-      case 'bearer':
-        return {
-          headers: {
-            Authorization: `Bearer ${service.getAuthData() as string}`,
-            ...service.getHeaders(),
-          },
-        };
+  private getHeaders(service: IHttpService) {
+    return {
+      headers: service.getHeaders()
     }
   }
 
@@ -68,7 +56,7 @@ export class HttpService {
 
     return {
       httpsAgent: this.httpsAgent,
-      ...this.getAuthConfigAndHeaders(service),
+      ...this.getHeaders(service),
       transformResponse: getTransformResponseCallback(responseType),
       transformRequest: (data) => {
         if (data instanceof FormData) {

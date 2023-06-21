@@ -25,9 +25,6 @@ class BaseService {
     getBody() {
         return this.body;
     }
-    getAuthData() {
-        return undefined;
-    }
     getDomain() {
         return this.domain;
     }

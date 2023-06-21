@@ -9,6 +9,10 @@ export class Moment {
     return moment(date).year();
   }
 
+  public static getMonthFromDate(date: Date): number {
+    return moment(date).month() + 1;
+  }
+
   public static getCurrentWeek(): number {
     this.updateStartOfWeek();
 
@@ -51,12 +55,13 @@ export class Moment {
     return myDate.unix();
   }
 
-  public static getStartTimeOfMonth(year: number): number {
-    return moment().year(year).startOf('month').unix();
+
+  public static getStartTimeOfYear(year: number): Date {
+    return moment().year(year).startOf('year').toDate();
   }
 
-  public static getEndTimeOfMonth(year: number): number {
-    return moment().year(year).endOf('month').unix();
+  public static getEndTimeOfYear(year: number): Date {
+    return moment().year(year).endOf('year').toDate();
   }
 
   public static getCurrentTimestamp() {

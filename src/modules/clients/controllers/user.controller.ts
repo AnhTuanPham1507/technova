@@ -2,8 +2,11 @@
 
 import { PageOptionsDTO } from "@common/dtos/requests/page-options.dto";
 import { PageDTO } from "@common/dtos/responses/page.dto";
-import { QueryTypeEnum } from "@constants/enums/query-type.enum";
-import { Body, Controller, Delete, Get, HttpStatus, Inject, Param, Post, Put, Query } from "@nestjs/common";
+import { RoleEnum } from "@constants/enums/role.enum";
+import { Roles } from "@decorators/role.decorator";
+import { AuthGuard } from "@modules/auth/guards/auth.guard";
+import { RolesGuard } from "@modules/auth/guards/role.guard";
+import { Body, Controller, Delete, Get, HttpStatus, Inject, Param, Post, Put, Query, Request, UseGuards } from "@nestjs/common";
 import { ApiBearerAuth, ApiBody, ApiNotFoundResponse, ApiOkResponse, ApiResponse, ApiTags, ApiUnauthorizedResponse } from "@nestjs/swagger";
 import { CreateUserDTO } from "../dtos/requests/create-user.dto";
 import { UpdateUserDTO } from "../dtos/requests/update-user.dto";
@@ -14,8 +17,8 @@ import { IUserService } from "../services/user.service";
 @Controller('/v1/user')
 @ApiTags('User')
 @ApiBearerAuth()
-// @UseGuards(OtableAuthGuard)
-// @Roles(RoleType.ADMIN, RoleType.USER)
+@UseGuards(AuthGuard, RolesGuard)
+@Roles(RoleEnum.ADMIN, RoleEnum.USER)
 export class UserController {
   constructor(
     @Inject('IUserService')
@@ -39,7 +42,7 @@ export class UserController {
     return this.userService.getAll(pageOptionsDTO);
   }
 
-  @Get('/:id')
+  @Get('/info')
   @ApiOkResponse({
     type: UserDTO,
     description: 'Got user successfully',
@@ -53,9 +56,9 @@ export class UserController {
     description: 'User with id ... can`t be found'
   })
   getUser(
-    @Param('id') id: string,
+    @Request() req,
   ): Promise<UserDTO> {
-    return this.userService.getById(id);
+    return this.userService.getByAccountId(req.user.id);
   }
 
   @Post('')

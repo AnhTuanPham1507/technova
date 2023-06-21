@@ -1,0 +1,43 @@
+import { IsJSON, IsNumber, IsString } from "class-validator";
+
+export class NotificationMoMoDTO {
+
+    @IsString()
+    partnerCode: string;
+
+    @IsString()
+    orderId: string;
+
+    @IsString()
+    requestId: string;
+
+    @IsNumber()
+    amount: number;
+
+    @IsString()
+    orderInfo: string;
+
+    @IsString()
+    orderType: string;
+
+    @IsNumber()
+    transId: number;
+
+    @IsNumber()
+    resultCode: number;
+
+    @IsString()
+    message: string;
+
+    @IsString()
+    payType: string;
+
+    @IsNumber()
+    responseTime: number;
+
+    @IsJSON()
+    extraData: object;
+
+    @IsString()
+    signature: string;
+}

@@ -6,6 +6,7 @@ import { AccountEntity } from "../entities/account.entity";
 export interface IAccountRepository {
     getByEmail(email: string): Promise<AccountEntity>;
     save(account: AccountEntity): Promise<AccountEntity>;
+    getById(id: string): Promise<AccountEntity>
 }
 
 @Injectable()
@@ -31,5 +32,19 @@ export class AccountRepository implements IAccountRepository {
     
     save(account: AccountEntity): Promise<AccountEntity>{
         return this.accountRepo.save(account);
+    }
+
+    async getById(id: string): Promise<AccountEntity>{
+        const account = await this.accountRepo.findOne({
+            where:{
+                id
+            }
+        })
+
+        if(!account){
+            throw new NotFoundException(`Account can't be found`);
+        }
+
+        return account;
     }
 }

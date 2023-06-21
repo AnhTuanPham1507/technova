@@ -6,8 +6,6 @@ import { IsEmail, IsPhoneNumber } from "class-validator";
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne } from "typeorm";
 import { OrderDetailEntity } from "./order-detail.entity";
 import { PaymentEntity } from "./payment.entity";
-
-
 @Entity({name: 'order'})
 export class OrderEntity extends AbstractEntity {
     @Column({
@@ -19,13 +17,15 @@ export class OrderEntity extends AbstractEntity {
     @Column({
         name: 'status',
         type: 'enum',
-        enum: OrderStatusEnum
+        enum: OrderStatusEnum,
+        default: OrderStatusEnum.pending
     })
     status: OrderStatusEnum;
 
     @Column({
         type: 'boolean',
-        name: 'is_paid'
+        name: 'is_paid',
+        default: false
     })
     isPaid: boolean;
 

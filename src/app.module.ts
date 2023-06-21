@@ -23,6 +23,9 @@ import { NewsModule } from '@modules/news/news.module';
 import { SolutionModule } from '@modules/solution/solution.module';
 import { AuthModule } from '@modules/auth/auth.module';
 import { ClientModule } from '@modules/clients/client.module';
+import { MailModule } from '@modules/mail/mail.module';
+import { ExternalModule } from '@modules/external/external.module';
+import { NotificationModule } from '@modules/notification/notification.module';
 
 @Module({
   imports: [
@@ -37,6 +40,9 @@ import { ClientModule } from '@modules/clients/client.module';
     SolutionModule,
     AuthModule,
     ClientModule,
+    MailModule,
+    ExternalModule,
+    NotificationModule,
     ConfigModule.load(path.resolve(__dirname, 'config', '**/!(*.d).{ts,js}')),
     TypeOrmModule.forRootAsync({
       imports: [SharedModule],

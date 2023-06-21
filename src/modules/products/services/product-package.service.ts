@@ -16,6 +16,7 @@ import { IBenefitValueService } from "./benefit-value.service";
 export interface IProductPackageService {
     getByProductId(productId: string): Promise<ProductPackageDTO[]>;
     create(createProductPackage: CreateProductPackageDTO, userId: string): Promise<ProductPackageDTO>;
+    getById(id: string): Promise<ProductPackageEntity>;
 }
 
 @Injectable()
@@ -64,6 +65,10 @@ export class ProductPackageService implements IProductPackageService{
     async getByProductId(productId: string): Promise<ProductPackageDTO[]>{
         const packages = await this.productPackageRepo.getByProductId(productId);
         return packages.map(productPackage => new ProductPackageDTO(productPackage));
+    }
+
+    getById(id: string): Promise<ProductPackageEntity>{
+        return this.productPackageRepo.getById(id);
     }
 
     async update(id: string, updateProductPackage: UpdateProductPackageDTO, userId: string): Promise<ProductPackageDTO>{

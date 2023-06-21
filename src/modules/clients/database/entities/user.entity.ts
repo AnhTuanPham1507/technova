@@ -1,5 +1,6 @@
 import { AbstractEntity } from "@common/abstract.entity";
 import { AccountEntity } from "@modules/auth/database/entities/account.entity";
+import { NotificationEntity } from "@modules/notification/database/entities/notification.entity";
 import { OrderEntity } from "@modules/orders/database/entities/order.entity";
 import { IsEmail, IsPhoneNumber, IsString } from "class-validator";
 import { Column, Entity, JoinColumn, OneToMany, OneToOne } from "typeorm";
@@ -40,6 +41,12 @@ export class UserEntity extends AbstractEntity {
         (order) => order.user
     )
     orders: OrderEntity[];
+
+    @OneToMany(
+        () => NotificationEntity,
+        (n) => n.user
+    )
+    notifications: NotificationEntity[];
 
     constructor(name: string, phone: string, address: string, account: AccountEntity){
         super();

@@ -24,4 +24,10 @@ export class EmployeeEntity extends AbstractEntity {
         (order) => order.employee
     )
     orders: OrderEntity[];
+
+    constructor(name: string, account: AccountEntity){
+        super();
+        this.name = name;
+        this.account = account;
+    }
 }

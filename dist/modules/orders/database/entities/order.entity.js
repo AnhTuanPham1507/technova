@@ -35,14 +35,16 @@ __decorate([
     (0, typeorm_1.Column)({
         name: 'status',
         type: 'enum',
-        enum: order_status_enum_1.OrderStatusEnum
+        enum: order_status_enum_1.OrderStatusEnum,
+        default: order_status_enum_1.OrderStatusEnum.pending
     }),
     __metadata("design:type", String)
 ], OrderEntity.prototype, "status", void 0);
 __decorate([
     (0, typeorm_1.Column)({
         type: 'boolean',
-        name: 'is_paid'
+        name: 'is_paid',
+        default: false
     }),
     __metadata("design:type", Boolean)
 ], OrderEntity.prototype, "isPaid", void 0);

@@ -32,6 +32,9 @@ const news_module_1 = require("./modules/news/news.module");
 const solution_module_1 = require("./modules/solution/solution.module");
 const auth_module_1 = require("./modules/auth/auth.module");
 const client_module_1 = require("./modules/clients/client.module");
+const mail_module_1 = require("./modules/mail/mail.module");
+const external_module_1 = require("./modules/external/external.module");
+const notification_module_1 = require("./modules/notification/notification.module");
 let AppModule = class AppModule {
     configure(consumer) {
         consumer
@@ -54,6 +57,9 @@ AppModule = __decorate([
             solution_module_1.SolutionModule,
             auth_module_1.AuthModule,
             client_module_1.ClientModule,
+            mail_module_1.MailModule,
+            external_module_1.ExternalModule,
+            notification_module_1.NotificationModule,
             nestjs_config_1.ConfigModule.load(path_1.default.resolve(__dirname, 'config', '**/!(*.d).{ts,js}')),
             typeorm_1.TypeOrmModule.forRootAsync({
                 imports: [shared_module_1.SharedModule],

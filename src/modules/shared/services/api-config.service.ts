@@ -77,8 +77,6 @@ export class EnvConfigService {
       tribeChannelName: this.configService.get(
         'app.tribeChannelName',
       ) as string,
-      jwtSecretKey: this.configService.get('app.jwtSecretKey') as string,
-      jwtExpiresIn: this.configService.get('app.jwtExpiresIn') as string
     };
   }
 
@@ -88,6 +86,27 @@ export class EnvConfigService {
       port: this.configService.get('redis.port'),
       ttl: this.configService.get('redis.ttl'),
       password: this.configService.get('redis.password'),
+    };
+  }
+
+  get momoConfig() {
+    return {
+      domain: this.configService.get('momo.domain'),
+      partnerCode: this.configService.get('momo.partnerCode'),
+      accessKey: this.configService.get('momo.accessKey'),
+      secretKey: this.configService.get('momo.secretKey'),
+      ipnUrl: this.configService.get('momo.ipnUrl'),
+      redirectUrl: this.configService.get('momo.redirectUrl'),
+    };
+  }
+
+  get mailConfig() {
+    return {
+      host: this.configService.get('mail.host'),
+      port: this.configService.get('mail.port') as number,
+      user: this.configService.get('mail.user'),
+      password: this.configService.get('mail.password'),
+      redirectUrl: this.configService.get('mail.redirectUrl')
     };
   }
 

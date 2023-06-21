@@ -12,6 +12,7 @@ export interface IUserRepository {
     getById(id: string): Promise<UserEntity>;
     save(user: UserEntity): Promise<UserEntity>;
     getAll(pageOptionsDTO: PageOptionsDTO): Promise<PageDTO<UserDTO>>;
+    getByAccountId(accountId: string): Promise<UserEntity>;
 }
 
 @Injectable()
@@ -25,7 +26,8 @@ export class UserRepository implements IUserRepository {
         const user = await this.userRepo.findOne({
             where:{
                 id
-            }
+            },
+            relations: ['account']
         })
 
         if(!user){
@@ -35,12 +37,30 @@ export class UserRepository implements IUserRepository {
         return user;
     }
 
+    async getByAccountId(accountId: string): Promise<UserEntity> {
+      const user = await this.userRepo.findOne({
+          where:{
+              account: {
+                id: accountId
+              },
+          },
+          relations: ['account']
+      })
+
+      if(!user){
+          throw new NotFoundException(`User  can't be found`);
+      }
+
+      return user;
+  }
+
     save(user: UserEntity): Promise<UserEntity> {
         return this.userRepo.save(user);
     }
 
     async getAll(pageOptionsDTO: PageOptionsDTO): Promise<PageDTO<UserDTO>> {
         const query = this.userRepo.createQueryBuilder('user');
+        query.leftJoinAndSelect('user.account','account')
         query.withDeleted();
     
         if (pageOptionsDTO.q && pageOptionsDTO.q.length > 0) {
@@ -69,7 +89,7 @@ export class UserRepository implements IUserRepository {
         const result = await query.getMany();
     
     
-        const productDTO = result.map((it) => new UserDTO(it));
+        const productDTO = result.map((it) => new UserDTO(it, it.account.email));
         const pageMetaDto = new PageMetaDTO({ pageOptionsDTO, itemCount });
     
         return new PageDTO<UserDTO>(productDTO, pageMetaDto);

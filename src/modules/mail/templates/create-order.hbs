@@ -1,0 +1,21 @@
+<h3 style="text-align:center">Có một đơn hàng vừa được đặt bởi khách hàng vào lúc {{createdAt}}</h3>
+
+<p>Thông tin khách hàng</p>
+<ul style="padding-left: 10px">
+   <li>Tên: {{customerName}}</li>
+   <li>Số điện thoại: {{phone}}</li>
+   <li>Email: {{email}}</li>
+</ul>
+
+<p>Thông tin đơn hàng</p>
+<ul style="padding-left: 10px">
+   <li>Mã định danh: {{orderId}}</li>
+   <li>
+        Sản phẩm:
+         {{#each product}}
+            <li>{{this}}</li>
+        {{/each}}
+   </li>
+   <li>Trạng thái: {{status}}</li>
+   <li>Tình trạng thanh toán: {{isPaid}}</li>   
+</ul>

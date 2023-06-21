@@ -12,6 +12,9 @@ class Moment {
     static getYearFromDate(date) {
         return (0, moment_1.default)(date).year();
     }
+    static getMonthFromDate(date) {
+        return (0, moment_1.default)(date).month() + 1;
+    }
     static getCurrentWeek() {
         this.updateStartOfWeek();
         return (0, moment_1.default)().week();
@@ -42,11 +45,11 @@ class Moment {
         const myDate = (0, moment_1.default)().week(week).year(year).endOf('week');
         return myDate.unix();
     }
-    static getStartTimeOfMonth(year) {
-        return (0, moment_1.default)().year(year).startOf('month').unix();
+    static getStartTimeOfYear(year) {
+        return (0, moment_1.default)().year(year).startOf('year').toDate();
     }
-    static getEndTimeOfMonth(year) {
-        return (0, moment_1.default)().year(year).endOf('month').unix();
+    static getEndTimeOfYear(year) {
+        return (0, moment_1.default)().year(year).endOf('year').toDate();
     }
     static getCurrentTimestamp() {
         return (0, moment_1.default)().unix();

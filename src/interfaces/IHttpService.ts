@@ -10,11 +10,9 @@ export interface IHttpService {
   getEndpoint(): string;
   getResponseType(): ClassConstructor<any>;
   getHeaders(): Record<string, string>;
-  getAuthType(): string;
   getMethod(): string;
   getQueryParameter(): Record<string, any> | undefined;
   getBody(): Record<string, any> | undefined;
   handleError?: (error: AxiosError) => void;
   getTimeout?: () => number | undefined;
-  getAuthData(): string | undefined | IBasicAuthData;
 }

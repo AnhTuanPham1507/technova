@@ -12,11 +12,13 @@ import { UpdateUserDTO } from "../dtos/requests/update-user.dto";
 import { UserDTO } from "../dtos/responses/user.dto";
 
 export interface IUserService {
-    getById(id: string): Promise<UserDTO>;
+    getByAccountId(id: string): Promise<UserDTO>;
     getAll(pageOptionsDTO: PageOptionsDTO): Promise<PageDTO<UserDTO>>;
     create(createUser: CreateUserDTO): Promise<UserDTO>;
     update(id: string, updateUser: UpdateUserDTO): Promise<UserDTO>;
     delete(id: string, userId: string): Promise<UserDTO>;
+    getEntityById(id: string): Promise<UserEntity>;
+    getEntityByAccountId(id: string): Promise<UserEntity>;
 }
 
 @Injectable()
@@ -28,10 +30,18 @@ export class UserService implements IUserService {
         private readonly accountService: AuthService
     ){}
 
-    async getById(id: string): Promise<UserDTO> {
-        const foundUser = await this.userRepo.getById(id); 
-        const userDTO = new UserDTO(foundUser);
+    async getByAccountId(id: string): Promise<UserDTO> {
+        const foundUser = await this.userRepo.getByAccountId(id); 
+        const userDTO = new UserDTO(foundUser,foundUser.account.email);
         return userDTO;
+    }
+
+    getEntityById(id: string): Promise<UserEntity>{
+        return this.userRepo.getById(id);
+    }
+
+    getEntityByAccountId(id: string): Promise<UserEntity>{
+        return this.userRepo.getByAccountId(id);
     }
 
     getAll(pageOptionsDTO: PageOptionsDTO): Promise<PageDTO<UserDTO>>{
@@ -46,7 +56,7 @@ export class UserService implements IUserService {
         
         const createdUser = await this.userRepo.save(user);
 
-        const userDTO =  new UserDTO(createdUser);
+        const userDTO =  new UserDTO(createdUser, createdAccount.email);
         return userDTO
     }
 
@@ -58,7 +68,7 @@ export class UserService implements IUserService {
 
         const updatedUser = await this.userRepo.save(user);
 
-        const userDTO =  new UserDTO(updatedUser);
+        const userDTO =  new UserDTO(updatedUser, updatedUser.account.email);
 
         return userDTO;
     }
@@ -73,7 +83,7 @@ export class UserService implements IUserService {
 
         const deletedUser = await this.userRepo.save(user);
 
-        const userDTO = new UserDTO(deletedUser);
+        const userDTO = new UserDTO(deletedUser, deletedUser.account.email);
 
         return userDTO;
     }

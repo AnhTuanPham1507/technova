@@ -11,6 +11,12 @@ export class UserDTO extends AbstractDTO {
     name: string;
 
     @ApiProperty({
+        name: 'email',
+        example: 'abc@gmail.com'
+    })
+    email: string;
+
+    @ApiProperty({
         name: 'phone',
         example: '0779982210'
     })
@@ -22,11 +28,12 @@ export class UserDTO extends AbstractDTO {
     })
     address: string;
 
-    constructor(user: UserEntity){
+    constructor(user: UserEntity, email: string){
         super(user);
         this.name = user.name;
         this.phone = user.phone;
         this.address = user.address;
+        this.email = email;
     }
 
 }

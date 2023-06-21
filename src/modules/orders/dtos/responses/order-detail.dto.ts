@@ -1,4 +1,6 @@
 import { AbstractDTO } from "@common/dtos/abstract.dto";
+import { OrderDetailEntity } from "@modules/orders/database/entities/order-detail.entity";
+import { ProductPackageDTO } from "@modules/products/dtos/responses/product-package.dto";
 import { ApiProperty } from "@nestjs/swagger";
 
 export class OrderDetailDTO extends AbstractDTO {
@@ -8,16 +10,28 @@ export class OrderDetailDTO extends AbstractDTO {
     })
     price: number;
 
-    @Column({
-        name: 'quantity',
+    @ApiProperty({
+        name: 'price',
         type: 'float'
     })
     quantity: number;
 
-    @ManyToOne(
-        () => ProductPackageEntity,
-        (p) => p.orderDetails
-    )
-    @JoinColumn({name: 'product_package_id'})
-    productPackage: ProductPackageEntity;
+    @ApiProperty({
+        name: 'productName',
+    })
+    productName: string;
+
+    @ApiProperty({
+        name: 'productPackage',
+        type: ProductPackageDTO
+    })
+    productPackage?: ProductPackageDTO;
+
+    constructor(orderDetail: OrderDetailEntity, productPackageDTO?: ProductPackageDTO){
+        super(orderDetail);
+        this.price = orderDetail.price;
+        this.quantity = orderDetail.quantity;
+        this.productName = orderDetail.productName;
+        this.productPackage = productPackageDTO;
+    }
 }

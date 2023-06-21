@@ -31,7 +31,6 @@ export abstract class BaseService implements IHttpService {
 
   abstract getHeaders(): Record<string, string>;
 
-  abstract getAuthType(): string;
 
   getResponseType(): ClassConstructor<any> {
     throw new Error('Method not implemented.');
@@ -53,10 +52,6 @@ export abstract class BaseService implements IHttpService {
 
   getBody(): Record<string, any> | undefined {
     return this.body;
-  }
-
-  getAuthData(): undefined | string | IBasicAuthData {
-    return undefined;
   }
 
   getDomain(): string {

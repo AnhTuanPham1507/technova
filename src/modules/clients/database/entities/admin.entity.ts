@@ -12,7 +12,6 @@ export class AdminEntity extends AbstractEntity {
     })
     name: string;
 
-
     @OneToOne(
         () => AccountEntity,
         (account) => account.admin

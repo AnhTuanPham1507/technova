@@ -1,10 +1,14 @@
+import { MailModule } from "@modules/mail/mail.module";
 import { EnvConfigService } from "@modules/shared/services/api-config.service";
+import { SharedModule } from "@modules/shared/shared.module";
 import { Module } from "@nestjs/common";
-import { JwtModule } from "@nestjs/jwt";
+import { JwtModule, JwtService } from "@nestjs/jwt";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { AuthController } from "./controllers/auth.controller";
 import { AccountEntity } from "./database/entities/account.entity";
 import { AccountRepository } from "./database/repositories/account.repository";
+import { AuthGuard } from "./guards/auth.guard";
+import { RolesGuard } from "./guards/role.guard";
 import { AuthService } from "./services/auth.service";
 
 @Module({
@@ -13,13 +17,17 @@ import { AuthService } from "./services/auth.service";
             AccountEntity
         ]),
         JwtModule.registerAsync({
-            useFactory: async (configService: EnvConfigService) => ({
-                secret: configService.appConfig.jwtSecretKey,
-                global: true,
-                signOptions: { expiresIn: configService.appConfig.jwtExpiresIn },
-            }),
+            imports: [SharedModule],
+            useFactory: async (configService: EnvConfigService) => {
+                return {
+                    secret: configService.authConfig.jwtPrivateKey,
+                    global: true,
+                    signOptions: { expiresIn: configService.authConfig.jwtExpirationTime },
+                }
+            },
             inject: [EnvConfigService],
-          })
+          }),
+          MailModule
     ],
     providers: [
         {
@@ -29,12 +37,18 @@ import { AuthService } from "./services/auth.service";
         {
             provide: 'IAccountRepository',
             useClass: AccountRepository
-        }
+        },
+        AuthGuard,
+        RolesGuard,
+        JwtService,
     ],
     controllers: [AuthController],
     exports: [
         'IAuthService',
-        'IAccountRepository'
+        'IAccountRepository',
+        AuthGuard,
+        RolesGuard,
+        JwtService,
     ]
 })
 export class AuthModule {}

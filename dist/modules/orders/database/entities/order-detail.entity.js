@@ -17,7 +17,7 @@ const typeorm_1 = require("typeorm");
 const order_entity_1 = require("./order.entity");
 let OrderDetailEntity = class OrderDetailEntity extends abstract_entity_1.AbstractEntity {
     static _OPENAPI_METADATA_FACTORY() {
-        return { price: { required: true, type: () => Number }, quantity: { required: true, type: () => Number }, productPackage: { required: true, type: () => require("../../../products/database/entities/product-package.entity").ProductPackageEntity }, order: { required: true, type: () => require("./order.entity").OrderEntity } };
+        return { price: { required: true, type: () => Number }, quantity: { required: true, type: () => Number }, productName: { required: true, type: () => String }, productPackage: { required: true, type: () => require("../../../products/database/entities/product-package.entity").ProductPackageEntity }, order: { required: true, type: () => require("./order.entity").OrderEntity } };
     }
 };
 __decorate([
@@ -34,6 +34,12 @@ __decorate([
     }),
     __metadata("design:type", Number)
 ], OrderDetailEntity.prototype, "quantity", void 0);
+__decorate([
+    (0, typeorm_1.Column)({
+        name: 'productName',
+    }),
+    __metadata("design:type", String)
+], OrderDetailEntity.prototype, "productName", void 0);
 __decorate([
     (0, typeorm_1.ManyToOne)(() => product_package_entity_1.ProductPackageEntity, (p) => p.orderDetails),
     (0, typeorm_1.JoinColumn)({ name: 'product_package_id' }),

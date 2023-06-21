@@ -30,17 +30,10 @@ let HttpService = HttpService_1 = class HttpService {
         this.httpsAgent = new https_1.Agent();
         this.logger = new common_1.Logger(HttpService_1.name);
     }
-    getAuthConfigAndHeaders(service) {
-        switch (service.getAuthType()) {
-            case 'basic':
-                return {
-                    headers: Object.assign({}, service.getHeaders()),
-                };
-            case 'bearer':
-                return {
-                    headers: Object.assign({ Authorization: `Bearer ${service.getAuthData()}` }, service.getHeaders()),
-                };
-        }
+    getHeaders(service) {
+        return {
+            headers: service.getHeaders()
+        };
     }
     getRequestConfig(service) {
         let queryParams;
@@ -55,7 +48,7 @@ let HttpService = HttpService_1 = class HttpService {
             queryParams = new URLSearchParams(queryRecord);
         }
         const responseType = service.getResponseType();
-        return Object.assign(Object.assign({ httpsAgent: this.httpsAgent }, this.getAuthConfigAndHeaders(service)), { transformResponse: (0, utils_1.getTransformResponseCallback)(responseType), transformRequest: (data) => {
+        return Object.assign(Object.assign({ httpsAgent: this.httpsAgent }, this.getHeaders(service)), { transformResponse: (0, utils_1.getTransformResponseCallback)(responseType), transformRequest: (data) => {
                 if (data instanceof form_data_1.default) {
                     return data;
                 }

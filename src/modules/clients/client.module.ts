@@ -5,7 +5,9 @@ import { UserController } from "./controllers/user.controller";
 import { AdminEntity } from "./database/entities/admin.entity";
 import { EmployeeEntity } from "./database/entities/employee.entity";
 import { UserEntity } from "./database/entities/user.entity";
+import { EmployeeRepository } from "./database/repositories/employee.dto";
 import { UserRepository } from "./database/repositories/user.repository";
+import { EmployeeService } from "./services/employee.service";
 import { UserService } from "./services/user.service";
 
 @Module({
@@ -22,11 +24,21 @@ import { UserService } from "./services/user.service";
         {
             provide: 'IUserService',
             useClass: UserService
+        },
+        {
+            provide: 'IEmployeeRepository',
+            useClass: EmployeeRepository
+        },
+        {
+            provide: 'IEmployeeService',
+            useClass: EmployeeService
         }
     ],
     exports: [
         'IUserRepository',
-        'IUserService'
+        'IUserService',
+        'IEmployeeRepository',
+        'IEmployeeService'
     ]
 })
 export class ClientModule {}

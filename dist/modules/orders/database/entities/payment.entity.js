@@ -12,33 +12,34 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.PaymentEntity = void 0;
 const openapi = require("@nestjs/swagger");
 const abstract_entity_1 = require("../../../../common/abstract.entity");
-const payment_type_enum_1 = require("../../../../constants/enums/payment-type.enum");
 const typeorm_1 = require("typeorm");
 const order_entity_1 = require("./order.entity");
 let PaymentEntity = class PaymentEntity extends abstract_entity_1.AbstractEntity {
+    transform() {
+        this.momoId = Number(this.momoId);
+    }
     static _OPENAPI_METADATA_FACTORY() {
-        return { momoId: { required: true, type: () => String }, type: { required: true, enum: require("../../../../constants/enums/payment-type.enum").paymentTypeEnum }, order: { required: true, type: () => require("./order.entity").OrderEntity } };
+        return { momoId: { required: true, type: () => Number }, order: { required: true, type: () => require("./order.entity").OrderEntity } };
     }
 };
 __decorate([
     (0, typeorm_1.Column)({
-        name: 'momo_id'
+        name: 'momo_id',
+        type: 'bigint'
     }),
-    __metadata("design:type", String)
+    __metadata("design:type", Number)
 ], PaymentEntity.prototype, "momoId", void 0);
-__decorate([
-    (0, typeorm_1.Column)({
-        name: 'type',
-        type: 'enum',
-        enum: payment_type_enum_1.paymentTypeEnum
-    }),
-    __metadata("design:type", String)
-], PaymentEntity.prototype, "type", void 0);
 __decorate([
     (0, typeorm_1.OneToOne)(() => order_entity_1.OrderEntity, (order) => order.payment),
     (0, typeorm_1.JoinColumn)({ name: 'order_id' }),
     __metadata("design:type", order_entity_1.OrderEntity)
 ], PaymentEntity.prototype, "order", void 0);
+__decorate([
+    (0, typeorm_1.AfterLoad)(),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], PaymentEntity.prototype, "transform", null);
 PaymentEntity = __decorate([
     (0, typeorm_1.Entity)({ name: 'payment' })
 ], PaymentEntity);
