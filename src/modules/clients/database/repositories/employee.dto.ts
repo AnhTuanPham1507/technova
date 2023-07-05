@@ -26,7 +26,8 @@ export class EmployeeRepository implements IEmployeeRepository {
         const employee = await this.employeeRepo.findOne({
             where:{
                 id
-            }
+            },
+            relations: ['account']
         })
 
         if(!employee){

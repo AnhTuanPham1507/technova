@@ -2,6 +2,7 @@ import { AbstractEntity } from "@common/abstract.entity";
 import { OrderStatusEnum } from "@constants/enums/order-status.enum";
 import { EmployeeEntity } from "@modules/clients/database/entities/employee.entity";
 import { UserEntity } from "@modules/clients/database/entities/user.entity";
+import { Transform } from "class-transformer";
 import { IsEmail, IsPhoneNumber } from "class-validator";
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne } from "typeorm";
 import { OrderDetailEntity } from "./order-detail.entity";
@@ -39,6 +40,7 @@ export class OrderEntity extends AbstractEntity {
         name: 'phone',
         length: 15
     })
+    @Transform((v) => "+84" + v.value )
     @IsPhoneNumber('VI')
     phone: string;
 

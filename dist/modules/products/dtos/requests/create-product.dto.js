@@ -12,10 +12,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreateProductDTO = void 0;
 const openapi = require("@nestjs/swagger");
 const swagger_1 = require("@nestjs/swagger");
+const class_transformer_1 = require("class-transformer");
 const class_validator_1 = require("class-validator");
 class CreateProductDTO {
     static _OPENAPI_METADATA_FACTORY() {
-        return { name: { required: true, type: () => String }, description: { required: true, type: () => String }, brandId: { required: true, type: () => String }, categoryId: { required: true, type: () => String }, imageId: { required: true, type: () => String }, imageDescriptionIds: { required: true, type: () => [String] } };
+        return { name: { required: true, type: () => String }, description: { required: true, type: () => String }, isContactToSell: { required: true, type: () => Boolean }, brandId: { required: true, type: () => String }, categoryId: { required: true, type: () => String }, imageId: { required: true, type: () => String }, imageDescriptionIds: { required: true, type: () => [String] } };
     }
 }
 __decorate([
@@ -35,6 +36,15 @@ __decorate([
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], CreateProductDTO.prototype, "description", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({
+        name: 'isContactToSell',
+        type: 'boolean',
+    }),
+    (0, class_validator_1.IsBoolean)(),
+    (0, class_transformer_1.Transform)(({ value }) => value === 'true'),
+    __metadata("design:type", Boolean)
+], CreateProductDTO.prototype, "isContactToSell", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({
         name: 'brandId',

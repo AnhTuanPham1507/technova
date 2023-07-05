@@ -17,8 +17,6 @@ import { IUserService } from "../services/user.service";
 @Controller('/v1/user')
 @ApiTags('User')
 @ApiBearerAuth()
-@UseGuards(AuthGuard, RolesGuard)
-@Roles(RoleEnum.ADMIN, RoleEnum.USER)
 export class UserController {
   constructor(
     @Inject('IUserService')
@@ -36,6 +34,8 @@ export class UserController {
     status: HttpStatus.INTERNAL_SERVER_ERROR,
     description: 'Internal server errors.',
   })
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(RoleEnum.ADMIN, RoleEnum.EMPLOYEE)
   getUserList(
     @Query() pageOptionsDTO: PageOptionsDTO
   ): Promise<PageDTO<UserDTO>> {
@@ -55,6 +55,8 @@ export class UserController {
   @ApiNotFoundResponse({
     description: 'User with id ... can`t be found'
   })
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(RoleEnum.USER, RoleEnum.ADMIN, RoleEnum.EMPLOYEE)
   getUser(
     @Request() req,
   ): Promise<UserDTO> {
@@ -92,11 +94,14 @@ export class UserController {
   @ApiNotFoundResponse({
     description: 'User with id ... can`t be found'
   })
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(RoleEnum.USER)
   updateUser(
     @Param('id') id: string,
     @Body() body: UpdateUserDTO,
+    @Request() req
   ): Promise<UserDTO> {
-    return this.userService.update(id, body);
+    return this.userService.update(id, body, req.user);
   }
 
   @Delete('/:id')
@@ -112,9 +117,12 @@ export class UserController {
   @ApiNotFoundResponse({
     description: 'User with id ... can`t be found'
   })
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(RoleEnum.ADMIN)
   deleteUser(
     @Param('id') id: string,
+    @Request() req
   ): Promise<UserDTO> {
-    return this.userService.delete(id, 'test');
+    return this.userService.delete(id, req.user);
   }
 }

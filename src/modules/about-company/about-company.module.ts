@@ -1,3 +1,5 @@
+import { AuthModule } from "@modules/auth/auth.module";
+import { ImageModule } from "@modules/images/image.module";
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { AboutCompanyController } from "./controllers/about-company.controller";
@@ -11,6 +13,8 @@ import { AboutCompanyService } from "./services/about-company.service";
         TypeOrmModule.forFeature([
             AboutCompanyEntity
         ]),
+        AuthModule,
+        ImageModule
     ],
     controllers: [AboutCompanyController],
     providers: [

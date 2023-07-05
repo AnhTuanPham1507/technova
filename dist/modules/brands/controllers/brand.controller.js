@@ -15,7 +15,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.BrandController = void 0;
 const openapi = require("@nestjs/swagger");
 const page_options_dto_1 = require("../../../common/dtos/requests/page-options.dto");
+const role_enum_1 = require("../../../constants/enums/role.enum");
+const role_decorator_1 = require("../../../decorators/role.decorator");
+const role_guard_1 = require("../../auth/guards/role.guard");
 const common_1 = require("@nestjs/common");
+const auth_guard_1 = require("../../auth/guards/auth.guard");
 const swagger_1 = require("@nestjs/swagger");
 const create_brand_dto_1 = require("../dtos/requests/create-brand.dto");
 const update_brand_dto_1 = require("../dtos/requests/update-brand.dto");
@@ -30,14 +34,14 @@ let BrandController = class BrandController {
     getBrand(id) {
         return this.brandService.getById(id);
     }
-    createBrand(body) {
-        return this.brandService.create(body, 'test');
+    createBrand(body, req) {
+        return this.brandService.create(body, req.user.id);
     }
-    updateBrand(id, body) {
-        return this.brandService.update(id, body, 'test');
+    updateBrand(id, body, req) {
+        return this.brandService.update(id, body, req.user.id);
     }
-    deleteBrand(id) {
-        return this.brandService.delete(id, 'test');
+    deleteBrand(id, req) {
+        return this.brandService.delete(id, req.user.id);
     }
 };
 __decorate([
@@ -90,10 +94,13 @@ __decorate([
         status: common_1.HttpStatus.INTERNAL_SERVER_ERROR,
         description: 'Internal server errors.',
     }),
+    (0, common_1.UseGuards)(auth_guard_1.AuthGuard, role_guard_1.RolesGuard),
+    (0, role_decorator_1.Roles)(role_enum_1.RoleEnum.ADMIN, role_enum_1.RoleEnum.EMPLOYEE),
     openapi.ApiResponse({ status: 201, type: require("../dtos/responses/brand.dto").BrandDTO }),
     __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.Request)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [create_brand_dto_1.CreateBrandDTO]),
+    __metadata("design:paramtypes", [create_brand_dto_1.CreateBrandDTO, Object]),
     __metadata("design:returntype", Promise)
 ], BrandController.prototype, "createBrand", null);
 __decorate([
@@ -111,11 +118,14 @@ __decorate([
     (0, swagger_1.ApiNotFoundResponse)({
         description: 'Brand with id ... can`t be found'
     }),
+    (0, common_1.UseGuards)(auth_guard_1.AuthGuard, role_guard_1.RolesGuard),
+    (0, role_decorator_1.Roles)(role_enum_1.RoleEnum.ADMIN, role_enum_1.RoleEnum.EMPLOYEE),
     openapi.ApiResponse({ status: 200, type: require("../dtos/responses/brand.dto").BrandDTO }),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)()),
+    __param(2, (0, common_1.Request)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, update_brand_dto_1.UpdateBrandDTO]),
+    __metadata("design:paramtypes", [String, update_brand_dto_1.UpdateBrandDTO, Object]),
     __metadata("design:returntype", Promise)
 ], BrandController.prototype, "updateBrand", null);
 __decorate([
@@ -132,16 +142,18 @@ __decorate([
     (0, swagger_1.ApiNotFoundResponse)({
         description: 'Brand with id ... can`t be found'
     }),
+    (0, common_1.UseGuards)(auth_guard_1.AuthGuard, role_guard_1.RolesGuard),
+    (0, role_decorator_1.Roles)(role_enum_1.RoleEnum.ADMIN, role_enum_1.RoleEnum.EMPLOYEE),
     openapi.ApiResponse({ status: 200, type: require("../dtos/responses/brand.dto").BrandDTO }),
     __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Request)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], BrandController.prototype, "deleteBrand", null);
 BrandController = __decorate([
     (0, common_1.Controller)('/v1/brand'),
     (0, swagger_1.ApiTags)('Brand'),
-    (0, swagger_1.ApiBearerAuth)(),
     __param(0, (0, common_1.Inject)('IBrandService')),
     __metadata("design:paramtypes", [Object])
 ], BrandController);

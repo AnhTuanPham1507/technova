@@ -15,6 +15,7 @@ const abstract_entity_1 = require("../../../../common/abstract.entity");
 const order_status_enum_1 = require("../../../../constants/enums/order-status.enum");
 const employee_entity_1 = require("../../../clients/database/entities/employee.entity");
 const user_entity_1 = require("../../../clients/database/entities/user.entity");
+const class_transformer_1 = require("class-transformer");
 const class_validator_1 = require("class-validator");
 const typeorm_1 = require("typeorm");
 const order_detail_entity_1 = require("./order-detail.entity");
@@ -60,6 +61,7 @@ __decorate([
         name: 'phone',
         length: 15
     }),
+    (0, class_transformer_1.Transform)((v) => "+84" + v.value),
     (0, class_validator_1.IsPhoneNumber)('VI'),
     __metadata("design:type", String)
 ], OrderEntity.prototype, "phone", void 0);

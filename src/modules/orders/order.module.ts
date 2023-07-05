@@ -1,8 +1,12 @@
+import { AuthModule } from "@modules/auth/auth.module";
 import { ClientModule } from "@modules/clients/client.module";
+import { MailModule } from "@modules/mail/mail.module";
+import { NotificationModule } from "@modules/notification/notification.module";
 import { ProductModule } from "@modules/products/product.module";
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { OrderController } from "./controllers/order.controller";
+import { StatisticController } from "./controllers/statistic.controller";
 import { OrderDetailEntity } from "./database/entities/order-detail.entity";
 import { OrderEntity } from "./database/entities/order.entity";
 import { PaymentEntity } from "./database/entities/payment.entity";
@@ -20,9 +24,12 @@ import { PaymentService } from "./services/payment.service";
             PaymentEntity
         ]),
         ProductModule,
-        ClientModule
+        ClientModule,
+        NotificationModule,
+        MailModule,
+        AuthModule
     ],
-    controllers: [OrderController],
+    controllers: [OrderController, StatisticController],
     providers: [
         {
             provide: 'IOrderRepository',

@@ -12,8 +12,13 @@ export class AccountDTO extends AbstractDTO {
     })
     role: string;
 
+
+    @ApiProperty()
+    email: string
+
     constructor(account: AccountEntity){
         super(account);
         this.role = account.role;
+        this.email = account.email;
     }
 }

@@ -9,8 +9,8 @@ export class Moment {
     return moment(date).year();
   }
 
-  public static getMonthFromDate(date: Date): number {
-    return moment(date).month() + 1;
+  public static getMonthFromDate(date: Date): string {
+    return moment(date).format('MMMM');
   }
 
   public static getCurrentWeek(): number {
@@ -30,6 +30,12 @@ export class Moment {
   public static getCurrentStringDate(): string {
     return moment().format('DD-MM-YYYY');
   }
+
+
+  public static getDateString(date: Date): string {
+    return moment(date).format('DD-MM-YYYY HH:mm');
+  }
+
 
   public static getCurrentDate(): Date {
     return moment().toDate();

@@ -18,7 +18,6 @@ import { IEmployeeService } from "../services/employee.service";
 @ApiTags('Employee')
 @ApiBearerAuth()
 @UseGuards(AuthGuard, RolesGuard)
-@Roles(RoleEnum.ADMIN, RoleEnum.USER)
 export class EmployeeController {
   constructor(
     @Inject('IEmployeeService')
@@ -36,6 +35,7 @@ export class EmployeeController {
     status: HttpStatus.INTERNAL_SERVER_ERROR,
     description: 'Internal server errors.',
   })
+  @Roles(RoleEnum.ADMIN)
   getEmployeeList(
     @Query() pageOptionsDTO: PageOptionsDTO
   ): Promise<PageDTO<EmployeeDTO>> {
@@ -55,6 +55,7 @@ export class EmployeeController {
   @ApiNotFoundResponse({
     description: 'Employee with id ... can`t be found'
   })
+  @Roles(RoleEnum.ADMIN, RoleEnum.EMPLOYEE)
   getEmployee(
     @Request() req,
   ): Promise<EmployeeDTO> {
@@ -72,6 +73,7 @@ export class EmployeeController {
     status: HttpStatus.INTERNAL_SERVER_ERROR,
     description: 'Internal server errors.',
   })
+  @Roles(RoleEnum.ADMIN)
   createEmployee(
     @Body() body: CreateEmployeeDTO,
   ): Promise<EmployeeDTO> {
@@ -92,6 +94,7 @@ export class EmployeeController {
   @ApiNotFoundResponse({
     description: 'Employee with id ... can`t be found'
   })
+  @Roles(RoleEnum.ADMIN)
   updateEmployee(
     @Param('id') id: string,
     @Body() body: UpdateEmployeeDTO,
@@ -112,9 +115,11 @@ export class EmployeeController {
   @ApiNotFoundResponse({
     description: 'Employee with id ... can`t be found'
   })
+  @Roles(RoleEnum.ADMIN)
   deleteEmployee(
     @Param('id') id: string,
+    @Request() req
   ): Promise<EmployeeDTO> {
-    return this.employeeService.delete(id, 'test');
+    return this.employeeService.delete(id, req.user);
   }
 }

@@ -17,9 +17,17 @@ export class NewsEntity extends AbstractEntity {
     })
     content: string;
 
-    constructor(title: string, content: string){
+    @Column({
+        name: 'description',
+        type: 'text',
+        default: ''
+    })
+    description: string;
+
+    constructor(title: string, content: string, description: string){
         super();
         this.title = title;
         this.content = content;
+        this.description = description;
     }
 }

@@ -1,8 +1,13 @@
 
 import { PageOptionsDTO } from "@common/dtos/requests/page-options.dto";
 import { PageDTO } from "@common/dtos/responses/page.dto";
-import { Body, Controller, Delete, Get, HttpStatus, Inject, Param, Post, Put, Query } from "@nestjs/common";
-import { ApiBearerAuth, ApiBody, ApiNotFoundResponse, ApiOkResponse, ApiResponse, ApiTags, ApiUnauthorizedResponse } from "@nestjs/swagger";
+import { RoleEnum } from "@constants/enums/role.enum";
+import { Roles } from "@decorators/role.decorator";
+import { RolesGuard } from "@modules/auth/guards/role.guard";
+import { Body, Controller, Delete, Get, HttpStatus, Inject, Param, Post, Put, Query, Request, UseGuards } from "@nestjs/common";
+import { AuthGuard } from "@modules/auth/guards/auth.guard";
+
+import { ApiBody, ApiNotFoundResponse, ApiOkResponse, ApiResponse, ApiTags, ApiUnauthorizedResponse } from "@nestjs/swagger";
 import { CreateAboutCompanyDTO } from "../dtos/requests/create-about-company.dto";
 import { UpdateAboutCompanyDTO } from "../dtos/requests/update-about-company.dto";
 import { AboutCompanyDTO } from "../dtos/responses/about-company.dto";
@@ -11,9 +16,6 @@ import { IAboutCompanyService } from "../services/about-company.service";
 
 @Controller('/v1/about-company')
 @ApiTags('AboutCompany')
-@ApiBearerAuth()
-// @UseGuards(OtableAuthGuard)
-// @Roles(RoleType.ADMIN, RoleType.USER)
 export class AboutCompanyController {
   constructor(
     @Inject('IAboutCompanyService')
@@ -67,10 +69,13 @@ export class AboutCompanyController {
     status: HttpStatus.INTERNAL_SERVER_ERROR,
     description: 'Internal server errors.',
   })
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(RoleEnum.ADMIN, RoleEnum.EMPLOYEE)
   createAboutCompany(
     @Body() body: CreateAboutCompanyDTO,
+    @Request() req
   ): Promise<AboutCompanyDTO> {
-    return this.aboutCompanyService.create(body, 'test');
+    return this.aboutCompanyService.create(body, req.user.id);
   }
 
   @Put('/:id')
@@ -87,11 +92,14 @@ export class AboutCompanyController {
   @ApiNotFoundResponse({
     description: 'AboutCompany with id ... can`t be found'
   })
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(RoleEnum.ADMIN,RoleEnum.EMPLOYEE)
   updateAboutCompany(
     @Param('id') id: string,
     @Body() body: UpdateAboutCompanyDTO,
+    @Request() req
   ): Promise<AboutCompanyDTO> {
-    return this.aboutCompanyService.update(id, body, 'test');
+    return this.aboutCompanyService.update(id, body, req.user.id);
   }
 
   @Delete('/:id')
@@ -107,9 +115,12 @@ export class AboutCompanyController {
   @ApiNotFoundResponse({
     description: 'AboutCompany with id ... can`t be found'
   })
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(RoleEnum.ADMIN, RoleEnum.EMPLOYEE)
   deleteAboutCompany(
     @Param('id') id: string,
+    @Request() req
   ): Promise<AboutCompanyDTO> {
-    return this.aboutCompanyService.delete(id, 'test');
+    return this.aboutCompanyService.delete(id, req.user.id);
   }
 }

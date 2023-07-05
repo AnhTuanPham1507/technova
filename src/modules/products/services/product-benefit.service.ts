@@ -1,4 +1,5 @@
 import { Moment } from "@/utils/my-moment.util";
+import { AccountDTO } from "@modules/auth/dtos/responses/account.dto";
 import {  Inject, Injectable } from "@nestjs/common";
 import { BenefitValueEntity } from "../database/entities/benefit-value.entity";
 import { ProductBenefitEntity } from "../database/entities/product-benefit.entity";
@@ -16,9 +17,9 @@ import { IBenefitValueService } from "./benefit-value.service";
 
 export interface IProductBenefitService {
     getByProductId(productId: string): Promise<ProductBenefitDTO[]>;
-    create(createProductBenefit: CreateProductBenefitDTO, userId: string): Promise<ProductBenefitDTO>;
-    update(id: string, updateProductBenefit: UpdateProductBenefitDTO, userId: string): Promise<ProductBenefitDTO>;
-    delete(id: string, userId: string): Promise<ProductBenefitDTO>;
+    create(createProductBenefit: CreateProductBenefitDTO, account: AccountDTO): Promise<ProductBenefitDTO>;
+    update(id: string, updateProductBenefit: UpdateProductBenefitDTO, account: AccountDTO): Promise<ProductBenefitDTO>;
+    delete(id: string, account: AccountDTO): Promise<ProductBenefitDTO>;
 }
 
 @Injectable()
@@ -36,14 +37,14 @@ export class ProductBenefitService implements IProductBenefitService{
         private readonly benefitValueService: IBenefitValueService
     ){}
 
-    async create(createProductBenefit: CreateProductBenefitDTO, userId: string): Promise<ProductBenefitDTO> {
+    async create(createProductBenefit: CreateProductBenefitDTO, account: AccountDTO): Promise<ProductBenefitDTO> {
         const {productId, name} = createProductBenefit;
 
         const product = await this.productRepo.getById(productId);
         
         const productBenefitPackage = new ProductBenefitEntity(name, product);
-        productBenefitPackage.createdBy = userId;
-        productBenefitPackage.updatedBy = userId;
+        productBenefitPackage.createdBy = account.id;
+        productBenefitPackage.updatedBy = account.id;
         const createdProductBenefit = await this.productBenefitRepo.save(productBenefitPackage);  
 
         const productPackages = await this.productPackageRepo.getByProductId(productId);
@@ -51,8 +52,8 @@ export class ProductBenefitService implements IProductBenefitService{
             productPackages.map(
                 async productPackage => {
                     const benefitValue = new BenefitValueEntity('', productPackage, createdProductBenefit);
-                    benefitValue.createdBy = userId
-                    benefitValue.updatedBy = userId
+                    benefitValue.createdBy = account.id
+                    benefitValue.updatedBy = account.id
                     const productPackageDTO = new ProductPackageDTO(productPackage)
                     const createdBenefitValue = await this.benefitValueRepo.save(benefitValue);
                     return new BenefitValueDTO(createdBenefitValue, productPackageDTO)
@@ -75,12 +76,12 @@ export class ProductBenefitService implements IProductBenefitService{
         });
     }
 
-     async update(id: string, updateProductBenefit: UpdateProductBenefitDTO, userId: string): Promise<ProductBenefitDTO>{
+     async update(id: string, updateProductBenefit: UpdateProductBenefitDTO, account: AccountDTO): Promise<ProductBenefitDTO>{
         const foundProductBenefit = await this.productBenefitRepo.getById(id);
         const productBenefit = Object.assign(foundProductBenefit,{
             ...updateProductBenefit,
             updatedAt: Moment.getCurrentDate(),
-            updatedBy: userId
+            updatedBy: account.id
         });
 
         const updatedProductBenefit = await this.productBenefitRepo.save(productBenefit);
@@ -91,18 +92,18 @@ export class ProductBenefitService implements IProductBenefitService{
         return productBenefitDTO;
     }
 
-    async delete(id: string, userId: string): Promise<ProductBenefitDTO>{
+    async delete(id: string, account: AccountDTO): Promise<ProductBenefitDTO>{
         const foundProductBenefit = await this.productBenefitRepo.getById(id);
 
         const productBenefit = Object.assign(foundProductBenefit,{
             deletedAt: Moment.getCurrentDate(),
-            deletedBy:userId
+            deletedBy:account.id
         })
 
         const deletedProductBenefit = await this.productBenefitRepo.save(productBenefit);
         await Promise.all(
             foundProductBenefit.benefitValues.map(
-                value => this.benefitValueService.delete(value.id, userId)
+                value => this.benefitValueService.delete(value.id, account.id)
             )
         );
 

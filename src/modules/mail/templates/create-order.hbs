@@ -12,9 +12,11 @@
    <li>Mã định danh: {{orderId}}</li>
    <li>
         Sản phẩm:
-         {{#each product}}
-            <li>{{this}}</li>
+         <ul style="padding-left: 10px">
+         {{#each products}}
+            <li>{{this.productName}} - {{this.quantity}}</li>
         {{/each}}
+        </ul>
    </li>
    <li>Trạng thái: {{status}}</li>
    <li>Tình trạng thanh toán: {{isPaid}}</li>   

@@ -7,6 +7,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CategoryModule = void 0;
+const auth_module_1 = require("../auth/auth.module");
 const image_module_1 = require("../images/image.module");
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
@@ -22,7 +23,8 @@ CategoryModule = __decorate([
             typeorm_1.TypeOrmModule.forFeature([
                 category_entity_1.CategoryEntity
             ]),
-            image_module_1.ImageModule
+            image_module_1.ImageModule,
+            auth_module_1.AuthModule
         ],
         providers: [
             {

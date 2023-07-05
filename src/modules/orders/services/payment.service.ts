@@ -3,6 +3,7 @@ import { PageOptionsDTO } from "@common/dtos/requests/page-options.dto";
 import { PageDTO } from "@common/dtos/responses/page.dto";
 import { ImageObjectTypeEnum } from "@constants/enums/image-object-type.enum";
 import { QueryTypeEnum } from "@constants/enums/query-type.enum";
+import { AccountDTO } from "@modules/auth/dtos/responses/account.dto";
 import { EmployeeEntity } from "@modules/clients/database/entities/employee.entity";
 import { IEmployeeService } from "@modules/clients/services/employee.service";
 import { IUserService } from "@modules/clients/services/user.service";
@@ -16,7 +17,7 @@ import { PaymentDTO } from "../dtos/responses/payment.dto";
 
 
 export interface IPaymentService {
-    create(createPayment: CreatePaymentDTO): Promise<PaymentDTO> ;
+    create(createPayment: CreatePaymentDTO, account: AccountDTO): Promise<PaymentDTO> ;
 }
 
 @Injectable()
@@ -28,11 +29,13 @@ export class PaymentService implements IPaymentService {
         private readonly orderRepo: IOrderRepository
     ){}
     
-    async create(createPayment: CreatePaymentDTO): Promise<PaymentDTO>{
+    async create(createPayment: CreatePaymentDTO, account: AccountDTO): Promise<PaymentDTO>{
         const order = await this.orderRepo.getById(createPayment.orderId);
         const payment = new PaymentEntity();
         payment.momoId = createPayment.momoId;
         payment.order = order;
+        payment.createdBy = account.id;
+        payment.updatedBy = account.id;
 
         const createdPayment = await this.paymentRepo.save(payment);
         return new PaymentDTO(createdPayment);

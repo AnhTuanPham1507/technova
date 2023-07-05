@@ -1,4 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
+import { Transform } from "class-transformer";
 import { IsEmail, IsOptional, IsPhoneNumber, IsString, Min } from "class-validator";
 
 export class UpdateUserDTO {
@@ -15,6 +16,7 @@ export class UpdateUserDTO {
         name: 'phone',
         example: '0779982210'
     })
+    @Transform((v) => "+84" + v.value )
     @IsPhoneNumber('VI')
     @IsOptional()
     phone: string;

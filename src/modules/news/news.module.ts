@@ -1,3 +1,5 @@
+import { AuthModule } from "@modules/auth/auth.module";
+import { ImageModule } from "@modules/images/image.module";
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { NewsController } from "./controllers/news.controller";
@@ -11,6 +13,8 @@ import { NewsService } from "./services/news.service";
         TypeOrmModule.forFeature([
             NewsEntity
         ]),
+        AuthModule,
+        ImageModule
     ],
     controllers: [NewsController],
     providers: [

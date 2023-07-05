@@ -1,7 +1,12 @@
 
 import { PageOptionsDTO } from "@common/dtos/requests/page-options.dto";
 import { PageDTO } from "@common/dtos/responses/page.dto";
-import { Body, Controller, Delete, Get, HttpStatus, Inject, Param, Post, Put, Query } from "@nestjs/common";
+import { RoleEnum } from "@constants/enums/role.enum";
+import { Roles } from "@decorators/role.decorator";
+import { RolesGuard } from "@modules/auth/guards/role.guard";
+import { Body, Controller, Delete, Get, HttpStatus, Inject, Param, Post, Put, Query, Request, UseGuards } from "@nestjs/common";
+import { AuthGuard } from "@modules/auth/guards/auth.guard";
+
 import { ApiBearerAuth, ApiBody, ApiNotFoundResponse, ApiOkResponse, ApiResponse, ApiTags, ApiUnauthorizedResponse } from "@nestjs/swagger";
 import { CreateNewsDTO } from "../dtos/requests/create-news.dto";
 import { UpdateNewsDTO } from "../dtos/requests/update-news.dto";
@@ -12,8 +17,6 @@ import { INewsService } from "../services/news.service";
 @Controller('/v1/news')
 @ApiTags('News')
 @ApiBearerAuth()
-// @UseGuards(OtableAuthGuard)
-// @Roles(RoleType.ADMIN, RoleType.USER)
 export class NewsController {
   constructor(
     @Inject('INewsService')
@@ -67,11 +70,13 @@ export class NewsController {
     status: HttpStatus.INTERNAL_SERVER_ERROR,
     description: 'Internal server errors.',
   })
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(RoleEnum.ADMIN, RoleEnum.EMPLOYEE)
   createNews(
     @Body() body: CreateNewsDTO,
+    @Request() req
   ): Promise<NewsDTO> {
-    console.log(body)
-    return this.newsService.create(body, 'test');
+    return this.newsService.create(body, req.user.id);
   }
 
   @Put('/:id')
@@ -88,11 +93,14 @@ export class NewsController {
   @ApiNotFoundResponse({
     description: 'News with id ... can`t be found'
   })
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(RoleEnum.ADMIN, RoleEnum.EMPLOYEE)
   updateNews(
     @Param('id') id: string,
     @Body() body: UpdateNewsDTO,
+    @Request() req
   ): Promise<NewsDTO> {
-    return this.newsService.update(id, body, 'test');
+    return this.newsService.update(id, body, req.user.id);
   }
 
   @Delete('/:id')
@@ -108,9 +116,12 @@ export class NewsController {
   @ApiNotFoundResponse({
     description: 'News with id ... can`t be found'
   })
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(RoleEnum.ADMIN, RoleEnum.EMPLOYEE)
   deleteNews(
     @Param('id') id: string,
+    @Request() req
   ): Promise<NewsDTO> {
-    return this.newsService.delete(id, 'test');
+    return this.newsService.delete(id, req.user.id);
   }
 }

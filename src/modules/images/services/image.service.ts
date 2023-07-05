@@ -50,7 +50,6 @@ export class ImageService implements IImageService {
             updatedBy: userId,
             updatedAt: Moment.getCurrentDate()
         }))
-        console.log(updateImages)
         const images = await this.imageRepo.saveMany(updateImages);
         const imagesDTO = images.map(image => new ImageDTO(image));
         return imagesDTO;

@@ -1,5 +1,4 @@
-import { EnvConfigService } from "@modules/shared/services/api-config.service";
-import { SharedModule } from "@modules/shared/shared.module";
+import { AuthModule } from "@modules/auth/auth.module";
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { v2 as cloudinary } from 'cloudinary';
@@ -12,7 +11,8 @@ import { ImageService } from "./services/image.service";
     imports:[
         TypeOrmModule.forFeature([
             ImageEntity
-        ])
+        ]),
+        AuthModule
     ],
     providers: [
         {

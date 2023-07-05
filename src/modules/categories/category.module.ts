@@ -1,3 +1,4 @@
+import { AuthModule } from "@modules/auth/auth.module";
 import { ImageModule } from "@modules/images/image.module";
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
@@ -11,7 +12,8 @@ import { CategoryService } from "./services/category.service";
         TypeOrmModule.forFeature([
             CategoryEntity
         ]),
-        ImageModule
+        ImageModule,
+        AuthModule
     ],
     providers: [
         {

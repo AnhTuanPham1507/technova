@@ -19,15 +19,16 @@ const discount_entity_1 = require("./discount.entity");
 const product_package_entity_1 = require("./product-package.entity");
 const product_tag_entity_1 = require("./product-tag.entity");
 let ProductEntity = class ProductEntity extends abstract_entity_1.AbstractEntity {
-    constructor(name, description, brand, category) {
+    constructor(name, description, isContactToSell, brand, category) {
         super();
         this.name = name;
         this.description = description;
         this.brand = brand;
         this.category = category;
+        this.isContactToSell = isContactToSell;
     }
     static _OPENAPI_METADATA_FACTORY() {
-        return { name: { required: true, type: () => String }, description: { required: true, type: () => String }, brand: { required: true, type: () => require("../../../brands/database/entities/brand.entity").BrandEntity, nullable: true }, category: { required: true, type: () => require("../../../categories/database/entities/category.entity").CategoryEntity, nullable: true }, discount: { required: true, type: () => require("./discount.entity").DiscountEntity }, tags: { required: true, type: () => [require("./product-tag.entity").ProductTagEntity] }, packages: { required: true, type: () => [require("./product-package.entity").ProductPackageEntity] }, benefits: { required: true, type: () => [require("./product-package.entity").ProductPackageEntity] } };
+        return { name: { required: true, type: () => String }, description: { required: true, type: () => String }, isContactToSell: { required: true, type: () => Boolean }, brand: { required: true, type: () => require("../../../brands/database/entities/brand.entity").BrandEntity, nullable: true }, category: { required: true, type: () => require("../../../categories/database/entities/category.entity").CategoryEntity, nullable: true }, discount: { required: true, type: () => require("./discount.entity").DiscountEntity }, tags: { required: true, type: () => [require("./product-tag.entity").ProductTagEntity] }, packages: { required: true, type: () => [require("./product-package.entity").ProductPackageEntity] }, benefits: { required: true, type: () => [require("./product-package.entity").ProductPackageEntity] } };
     }
 };
 __decorate([
@@ -44,6 +45,14 @@ __decorate([
     }),
     __metadata("design:type", String)
 ], ProductEntity.prototype, "description", void 0);
+__decorate([
+    (0, typeorm_1.Column)({
+        name: 'is_contact_to_sell',
+        type: 'boolean',
+        default: false
+    }),
+    __metadata("design:type", Boolean)
+], ProductEntity.prototype, "isContactToSell", void 0);
 __decorate([
     (0, typeorm_1.ManyToOne)(() => brand_entity_1.BrandEntity, (brand) => brand.products),
     (0, typeorm_1.JoinColumn)({ name: 'brand_id' }),
@@ -73,7 +82,7 @@ __decorate([
 ], ProductEntity.prototype, "benefits", void 0);
 ProductEntity = __decorate([
     (0, typeorm_1.Entity)({ name: 'product' }),
-    __metadata("design:paramtypes", [String, String, brand_entity_1.BrandEntity, category_entity_1.CategoryEntity])
+    __metadata("design:paramtypes", [String, String, Boolean, brand_entity_1.BrandEntity, category_entity_1.CategoryEntity])
 ], ProductEntity);
 exports.ProductEntity = ProductEntity;
 //# sourceMappingURL=product.entity.js.map

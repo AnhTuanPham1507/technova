@@ -7,11 +7,12 @@
             "@nestjs/swagger/plugin"
         ],
         "assets": [
+            "modules/mail/templates/**/*",
             {
                 "include": "i18n/*.json",
                 "outDir": "dist/src"
-            },
-            "mail/templates/*.hbs"
-        ]
+            }
+        ],
+        "watchAssets": true 
     }
 }

@@ -26,6 +26,8 @@ import { ClientModule } from '@modules/clients/client.module';
 import { MailModule } from '@modules/mail/mail.module';
 import { ExternalModule } from '@modules/external/external.module';
 import { NotificationModule } from '@modules/notification/notification.module';
+import { TechnovaServiceModule } from '@modules/technova-service/technova-service.module';
+import { BannerModule } from '@modules/banner/banner.module';
 
 @Module({
   imports: [
@@ -43,6 +45,8 @@ import { NotificationModule } from '@modules/notification/notification.module';
     MailModule,
     ExternalModule,
     NotificationModule,
+    TechnovaServiceModule,
+    BannerModule,
     ConfigModule.load(path.resolve(__dirname, 'config', '**/!(*.d).{ts,js}')),
     TypeOrmModule.forRootAsync({
       imports: [SharedModule],

@@ -11,4 +11,20 @@ export class UpdateEmployeeDTO {
     @IsOptional()
     name: string;
 
+    @ApiProperty({
+        name: 'password',
+        example: 'password'
+    })
+    @IsString()
+    // @Min(8)
+    // @Max(50)
+    @IsOptional()
+    password: string;
+
+    @IsString()
+    // @Min(8)
+    // @Max(50)
+    @IsOptional()
+    email: string;
+
 }

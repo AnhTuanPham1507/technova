@@ -25,7 +25,6 @@ export class ProductBenefitRepository implements IProductBenefitRepository{
         query.leftJoinAndSelect('benefit.product', 'product');
         query.leftJoinAndSelect('benefit.benefitValues', 'benefitValues')
         query.leftJoinAndSelect('benefitValues.productPackage', 'productPackage')
-        query.withDeleted();
 
         query.where('(benefit.product = :productId)', {
             productId: id,

@@ -4,5 +4,8 @@ export enum ImageObjectTypeEnum {
     PRODUCT_DESCRIPTION = 'product_description',
     BRAND = 'brand',
     NEWS = 'news',
-    CATEGORY='category'
+    CATEGORY='category',
+    ABOUT_TECHNOVA='about_technova',
+    SOLUTION='solution',
+    TECHNOVA_SERVICE='technova_service'
 }

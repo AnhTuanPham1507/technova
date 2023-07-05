@@ -13,7 +13,7 @@ class Moment {
         return (0, moment_1.default)(date).year();
     }
     static getMonthFromDate(date) {
-        return (0, moment_1.default)(date).month() + 1;
+        return (0, moment_1.default)(date).format('MMMM');
     }
     static getCurrentWeek() {
         this.updateStartOfWeek();
@@ -27,6 +27,9 @@ class Moment {
     }
     static getCurrentStringDate() {
         return (0, moment_1.default)().format('DD-MM-YYYY');
+    }
+    static getDateString(date) {
+        return (0, moment_1.default)(date).format('DD-MM-YYYY HH:mm');
     }
     static getCurrentDate() {
         return (0, moment_1.default)().toDate();

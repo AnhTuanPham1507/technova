@@ -35,8 +35,8 @@ export class NotificationMoMoDTO {
     @IsNumber()
     responseTime: number;
 
-    @IsJSON()
-    extraData: object;
+    @IsString()
+    extraData: string;
 
     @IsString()
     signature: string;

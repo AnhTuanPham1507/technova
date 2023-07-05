@@ -1,9 +1,10 @@
 
-import { PageDTO } from "@common/dtos/responses/page.dto";
 import { RoleEnum } from "@constants/enums/role.enum";
 import { Roles } from "@decorators/role.decorator";
+import { RolesGuard } from "@modules/auth/guards/role.guard";
 import {  Controller, Get, HttpStatus, Inject,  Query, UseGuards } from "@nestjs/common";
-import { AuthGuard } from "@nestjs/passport";
+import { AuthGuard } from "@modules/auth/guards/auth.guard";
+
 import { ApiBearerAuth,  ApiOkResponse, ApiResponse, ApiTags, ApiUnauthorizedResponse } from "@nestjs/swagger";
 import { IOrderService } from "../services/order.service";
 
@@ -11,9 +12,9 @@ import { IOrderService } from "../services/order.service";
 @Controller('/v1/statistic')
 @ApiTags('Statistic')
 @ApiBearerAuth()
-@UseGuards(AuthGuard)
+@UseGuards(AuthGuard, RolesGuard)
 @Roles(RoleEnum.ADMIN)
-export class StatictisController {
+export class StatisticController {
   constructor(
     @Inject('IOrderService')
     private readonly orderService: IOrderService,

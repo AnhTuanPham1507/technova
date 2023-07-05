@@ -56,6 +56,12 @@ export class NewsRepository implements INewsRepository {
             query.andWhere('news.deleted_at is not null');
             break;
         }
+
+        if(pageOptionsDTO.q){
+            query.andWhere('news.title ILIKE :q',{
+                q: `%${pageOptionsDTO.q}%`,
+            })
+        }
         
         query.orderBy(`news.${pageOptionsDTO.orderBy}`, pageOptionsDTO.order);
     

@@ -1,7 +1,11 @@
 
 import { PageDTO } from "@common/dtos/responses/page.dto";
+import { RoleEnum } from "@constants/enums/role.enum";
+import { Roles } from "@decorators/role.decorator";
 import { AccountDTO } from "@modules/auth/dtos/responses/account.dto";
-import { Body, Controller, Delete, Get, HttpStatus, Inject, Param, Post, Put, Query, Request } from "@nestjs/common";
+import { AuthGuard } from "@modules/auth/guards/auth.guard";
+import { RolesGuard } from "@modules/auth/guards/role.guard";
+import { Body, Controller, Delete, Get, HttpStatus, Inject, Param, Post, Put, Query, Request, UseGuards } from "@nestjs/common";
 import { ApiBearerAuth, ApiBody, ApiNotFoundResponse, ApiOkResponse, ApiResponse, ApiTags, ApiUnauthorizedResponse } from "@nestjs/swagger";
 import { CreateOrderDTO } from "../dtos/requests/create-order.dto";
 import { OrderPageOptionsDTO } from "../dtos/requests/order-page-options.dto";
@@ -13,8 +17,6 @@ import { IOrderService } from "../services/order.service";
 @Controller('/v1/order')
 @ApiTags('Order')
 @ApiBearerAuth()
-// @UseGuards(OtableAuthGuard)
-// @Roles(RoleType.ADMIN, RoleType.USER)
 export class OrderController {
   constructor(
     @Inject('IOrderService')
@@ -32,6 +34,8 @@ export class OrderController {
     status: HttpStatus.INTERNAL_SERVER_ERROR,
     description: 'Internal server errors.',
   })
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(RoleEnum.ADMIN, RoleEnum.EMPLOYEE)
   getOrderList(
     @Query() pageOptionsDTO: OrderPageOptionsDTO
   ): Promise<PageDTO<OrderDTO>> {
@@ -49,6 +53,8 @@ export class OrderController {
     status: HttpStatus.INTERNAL_SERVER_ERROR,
     description: 'Internal server errors.',
   })
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(RoleEnum.ADMIN, RoleEnum.EMPLOYEE, RoleEnum.USER)
   getOrderListOfUser(
     @Query() pageOptionsDTO: OrderPageOptionsDTO,
     @Request() req
@@ -69,6 +75,8 @@ export class OrderController {
     status: HttpStatus.INTERNAL_SERVER_ERROR,
     description: 'Internal server errors.',
   })
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(RoleEnum.ADMIN, RoleEnum.EMPLOYEE, RoleEnum.USER)
   createOrder(
     @Body() body: CreateOrderDTO,
   ): Promise<OrderDTO> {
@@ -89,29 +97,13 @@ export class OrderController {
   @ApiNotFoundResponse({
     description: 'Order with id ... can`t be found'
   })
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(RoleEnum.ADMIN, RoleEnum.EMPLOYEE)
   updateOrder(
     @Param('id') id: string,
     @Body() body: UpdateOrderDTO,
+    @Request() req
   ): Promise<OrderDTO> {
-    return this.orderService.update(id, body, 'test');
-  }
-
-  @Delete('/:id')
-  @ApiOkResponse({
-    description: 'Delete order successfully',
-    type: OrderDTO
-  })
-  @ApiUnauthorizedResponse()
-  @ApiResponse({
-    status: HttpStatus.INTERNAL_SERVER_ERROR,
-    description: 'Internal server errors.',
-  })
-  @ApiNotFoundResponse({
-    description: 'Order with id ... can`t be found'
-  })
-  deleteOrder(
-    @Param('id') id: string,
-  ): Promise<OrderDTO> {
-    return this.orderService.delete(id, 'test');
+    return this.orderService.update(id, body, req.user);
   }
 }

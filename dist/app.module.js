@@ -35,6 +35,8 @@ const client_module_1 = require("./modules/clients/client.module");
 const mail_module_1 = require("./modules/mail/mail.module");
 const external_module_1 = require("./modules/external/external.module");
 const notification_module_1 = require("./modules/notification/notification.module");
+const technova_service_module_1 = require("./modules/technova-service/technova-service.module");
+const banner_module_1 = require("./modules/banner/banner.module");
 let AppModule = class AppModule {
     configure(consumer) {
         consumer
@@ -60,6 +62,8 @@ AppModule = __decorate([
             mail_module_1.MailModule,
             external_module_1.ExternalModule,
             notification_module_1.NotificationModule,
+            technova_service_module_1.TechnovaServiceModule,
+            banner_module_1.BannerModule,
             nestjs_config_1.ConfigModule.load(path_1.default.resolve(__dirname, 'config', '**/!(*.d).{ts,js}')),
             typeorm_1.TypeOrmModule.forRootAsync({
                 imports: [shared_module_1.SharedModule],

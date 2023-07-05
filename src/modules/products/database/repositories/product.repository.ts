@@ -5,7 +5,7 @@ import { BrandDTO } from "@modules/brands/dtos/responses/brand.dto";
 import { CategoryDTO } from "@modules/categories/dtos/responses/category.dto";
 import { ProductPageOptionsDTO } from "@modules/products/dtos/requests/product-page-option.dto";
 import { ProductDTO } from "@modules/products/dtos/responses/product.dto";
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { ConsoleLogger, Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { In, Repository } from "typeorm";
 import { ProductEntity } from "../entities/product.entity";
@@ -34,18 +34,18 @@ export class ProductRepository implements IProductRepository {
         query.leftJoinAndSelect('product.brand', 'brand')
         query.withDeleted();
     
+      
         if (pageOptionsDTO.q && pageOptionsDTO.q.length > 0) {
           query.andWhere('(product.name ILIKE :q)', {
             q: `%${pageOptionsDTO.q}%`,
           });
         }
-
-        if(pageOptionsDTO.brandId){
-          query.andWhere('brand.id = :brandId',{brandId: pageOptionsDTO.brandId});
+        if(pageOptionsDTO.brandIds){
+          query.andWhere('brand.id in (:...brandIds)',{brandIds: pageOptionsDTO.brandIds});
         }
 
-        if(pageOptionsDTO.categoryId){
-          query.andWhere('brand.id = :categoryId',{categoryId: pageOptionsDTO.categoryId});
+        if(pageOptionsDTO.categoryIds){
+          query.andWhere('category.id in(:...categoryIds)',{categoryIds: pageOptionsDTO.categoryIds});
         }
 
         switch(pageOptionsDTO.queryType){

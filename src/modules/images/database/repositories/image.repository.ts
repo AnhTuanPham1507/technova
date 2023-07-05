@@ -60,6 +60,9 @@ export class ImageRepository implements IImageRepository {
             where: {
                 objectId,
                 objectType
+            },
+            order: {
+                createdAt: 'DESC'
             }
         })
     }

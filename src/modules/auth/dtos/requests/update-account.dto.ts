@@ -1,13 +1,26 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsString, Min } from "class-validator";
+import { IsEmail, IsString, Min } from "class-validator";
 
 
 export class UpdateAccountDTO {
     @ApiProperty({
-        name: 'password',
+        name: 'email',
+        example: 'abc@gmail.com'
+    })
+    @IsEmail()
+    email: string;
+
+    @ApiProperty({
+        name: 'currentPassword',
         example: '123455Aa'
     })
     @IsString()
-    @Min(8)
-    password: string;
+    currentPassword: string;
+
+    @ApiProperty({
+        name: 'newPassword',
+        example: '123455Aa'
+    })
+    @IsString()
+    newPassword: string;
 }

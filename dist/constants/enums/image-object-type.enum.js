@@ -9,5 +9,8 @@ var ImageObjectTypeEnum;
     ImageObjectTypeEnum["BRAND"] = "brand";
     ImageObjectTypeEnum["NEWS"] = "news";
     ImageObjectTypeEnum["CATEGORY"] = "category";
+    ImageObjectTypeEnum["ABOUT_TECHNOVA"] = "about_technova";
+    ImageObjectTypeEnum["SOLUTION"] = "solution";
+    ImageObjectTypeEnum["TECHNOVA_SERVICE"] = "technova_service";
 })(ImageObjectTypeEnum = exports.ImageObjectTypeEnum || (exports.ImageObjectTypeEnum = {}));
 //# sourceMappingURL=image-object-type.enum.js.map

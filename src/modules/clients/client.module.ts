@@ -1,6 +1,7 @@
 import { AuthModule } from "@modules/auth/auth.module";
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
+import { EmployeeController } from "./controllers/employee.controller";
 import { UserController } from "./controllers/user.controller";
 import { AdminEntity } from "./database/entities/admin.entity";
 import { EmployeeEntity } from "./database/entities/employee.entity";
@@ -15,7 +16,7 @@ import { UserService } from "./services/user.service";
         TypeOrmModule.forFeature([UserEntity, AdminEntity, EmployeeEntity]),
         AuthModule
     ],
-    controllers: [UserController],
+    controllers: [UserController, EmployeeController],
     providers: [
         {
             provide: 'IUserRepository',

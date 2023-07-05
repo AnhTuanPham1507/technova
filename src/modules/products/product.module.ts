@@ -1,3 +1,4 @@
+import { AuthModule } from "@modules/auth/auth.module";
 import { BrandModule } from "@modules/brands/brand.module";
 import { CategoryModule } from "@modules/categories/category.module";
 import { ImageModule } from "@modules/images/image.module";
@@ -36,7 +37,8 @@ import { ProductService } from "./services/product.service";
         ]),
         forwardRef(() =>BrandModule),
         CategoryModule,
-        ImageModule
+        ImageModule,
+        AuthModule
     ],
     providers: [
         {

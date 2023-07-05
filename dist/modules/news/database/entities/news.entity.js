@@ -14,13 +14,14 @@ const openapi = require("@nestjs/swagger");
 const abstract_entity_1 = require("../../../../common/abstract.entity");
 const typeorm_1 = require("typeorm");
 let NewsEntity = class NewsEntity extends abstract_entity_1.AbstractEntity {
-    constructor(title, content) {
+    constructor(title, content, description) {
         super();
         this.title = title;
         this.content = content;
+        this.description = description;
     }
     static _OPENAPI_METADATA_FACTORY() {
-        return { title: { required: true, type: () => String }, content: { required: true, type: () => String } };
+        return { title: { required: true, type: () => String }, content: { required: true, type: () => String }, description: { required: true, type: () => String } };
     }
 };
 __decorate([
@@ -37,9 +38,17 @@ __decorate([
     }),
     __metadata("design:type", String)
 ], NewsEntity.prototype, "content", void 0);
+__decorate([
+    (0, typeorm_1.Column)({
+        name: 'description',
+        type: 'text',
+        default: ''
+    }),
+    __metadata("design:type", String)
+], NewsEntity.prototype, "description", void 0);
 NewsEntity = __decorate([
     (0, typeorm_1.Entity)({ name: 'news' }),
-    __metadata("design:paramtypes", [String, String])
+    __metadata("design:paramtypes", [String, String, String])
 ], NewsEntity);
 exports.NewsEntity = NewsEntity;
 //# sourceMappingURL=news.entity.js.map

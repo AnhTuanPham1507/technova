@@ -1,3 +1,4 @@
+import { AuthModule } from "@modules/auth/auth.module";
 import { ImageModule } from "@modules/images/image.module";
 import { ProductModule } from "@modules/products/product.module";
 import { forwardRef, Module } from "@nestjs/common";
@@ -13,7 +14,8 @@ import { BrandService } from "./services/brand.service";
             BrandEntity
         ]),
         forwardRef(() => ProductModule),
-        ImageModule
+        ImageModule,
+        AuthModule
     ],
     providers: [
         {

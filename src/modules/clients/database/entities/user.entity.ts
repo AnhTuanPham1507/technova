@@ -2,7 +2,8 @@ import { AbstractEntity } from "@common/abstract.entity";
 import { AccountEntity } from "@modules/auth/database/entities/account.entity";
 import { NotificationEntity } from "@modules/notification/database/entities/notification.entity";
 import { OrderEntity } from "@modules/orders/database/entities/order.entity";
-import { IsEmail, IsPhoneNumber, IsString } from "class-validator";
+import { Transform } from "class-transformer";
+import { IsPhoneNumber, IsString } from "class-validator";
 import { Column, Entity, JoinColumn, OneToMany, OneToOne } from "typeorm";
 
 
@@ -18,6 +19,7 @@ export class UserEntity extends AbstractEntity {
         name: 'phone',
         length: 15
     })
+    @Transform((v) => "+84" + v.value )
     @IsPhoneNumber('VI')
     phone: string;
 
@@ -42,11 +44,6 @@ export class UserEntity extends AbstractEntity {
     )
     orders: OrderEntity[];
 
-    @OneToMany(
-        () => NotificationEntity,
-        (n) => n.user
-    )
-    notifications: NotificationEntity[];
 
     constructor(name: string, phone: string, address: string, account: AccountEntity){
         super();

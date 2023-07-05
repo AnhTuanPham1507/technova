@@ -3,6 +3,7 @@ import { PageOptionsDTO } from "@common/dtos/requests/page-options.dto";
 import { PageDTO } from "@common/dtos/responses/page.dto";
 import { RoleEnum } from "@constants/enums/role.enum";
 import { CreateAccountDTO } from "@modules/auth/dtos/requests/create-account.dto";
+import { AccountDTO } from "@modules/auth/dtos/responses/account.dto";
 import { AuthService } from "@modules/auth/services/auth.service";
 import { Inject, Injectable } from "@nestjs/common";
 import { EmployeeEntity } from "../database/entities/employee.entity";
@@ -16,7 +17,7 @@ export interface IEmployeeService {
     getAll(pageOptionsDTO: PageOptionsDTO): Promise<PageDTO<EmployeeDTO>>;
     create(createEmployee: CreateEmployeeDTO): Promise<EmployeeDTO>;
     update(id: string, updateEmployee: UpdateEmployeeDTO): Promise<EmployeeDTO>;
-    delete(id: string, employeeId: string): Promise<EmployeeDTO>;
+    delete(id: string, account: AccountDTO): Promise<EmployeeDTO>;
     getEntityByAccountId(id: string): Promise<EmployeeEntity>;
     getByAccountId(id: string): Promise<EmployeeDTO>;
 }
@@ -65,6 +66,9 @@ export class EmployeeService implements IEmployeeService {
         const employee = Object.assign(foundEmployee,{
             ...updateEmployee,
         });
+        employee.account.password =  await this.accountService.hashPassword(updateEmployee.password);
+        employee.account.email =  updateEmployee.email;
+        await this.accountService.save(employee.account);
 
         const updatedEmployee = await this.employeeRepo.save(employee);
 
@@ -73,12 +77,12 @@ export class EmployeeService implements IEmployeeService {
         return employeeDTO;
     }
 
-    async delete(id: string, employeeId: string): Promise<EmployeeDTO>{
+    async delete(id: string, account: AccountDTO): Promise<EmployeeDTO>{
         const foundEmployee = await this.employeeRepo.getById(id);
-
+        await this.accountService.delete(foundEmployee.account.id, account)
         const employee = Object.assign(foundEmployee,{
             deletedAt: Moment.getCurrentDate(),
-            deletedBy:employeeId
+            deletedBy:account.id
         })
 
         const deletedEmployee = await this.employeeRepo.save(employee);

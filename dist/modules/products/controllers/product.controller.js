@@ -23,6 +23,10 @@ const update_product_dto_1 = require("../dtos/requests/update-product.dto");
 const product_benefit_dto_1 = require("../dtos/responses/product-benefit.dto");
 const product_package_dto_1 = require("../dtos/responses/product-package.dto");
 const product_page_option_dto_1 = require("../dtos/requests/product-page-option.dto");
+const auth_guard_1 = require("../../auth/guards/auth.guard");
+const role_guard_1 = require("../../auth/guards/role.guard");
+const role_enum_1 = require("../../../constants/enums/role.enum");
+const role_decorator_1 = require("../../../decorators/role.decorator");
 let ProductController = class ProductController {
     constructor(productService, productBenefitService, productPackageService) {
         this.productService = productService;
@@ -41,14 +45,14 @@ let ProductController = class ProductController {
     getProductPackages(id) {
         return this.productPackageService.getByProductId(id);
     }
-    createProduct(body) {
-        return this.productService.create(body, 'test');
+    createProduct(body, req) {
+        return this.productService.create(body, req.user);
     }
-    updateProduct(id, body) {
-        return this.productService.update(id, body, 'test');
+    updateProduct(id, body, req) {
+        return this.productService.update(id, body, req.user);
     }
-    deleteProduct(id) {
-        return this.productService.delete(id, 'test');
+    deleteProduct(id, req) {
+        return this.productService.delete(id, req.user);
     }
 };
 __decorate([
@@ -142,10 +146,13 @@ __decorate([
         status: common_1.HttpStatus.INTERNAL_SERVER_ERROR,
         description: 'Internal server errors.',
     }),
+    (0, common_1.UseGuards)(auth_guard_1.AuthGuard, role_guard_1.RolesGuard),
+    (0, role_decorator_1.Roles)(role_enum_1.RoleEnum.ADMIN, role_enum_1.RoleEnum.EMPLOYEE),
     openapi.ApiResponse({ status: 201, type: require("../dtos/responses/product.dto").ProductDTO }),
     __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.Request)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [create_product_dto_1.CreateProductDTO]),
+    __metadata("design:paramtypes", [create_product_dto_1.CreateProductDTO, Object]),
     __metadata("design:returntype", Promise)
 ], ProductController.prototype, "createProduct", null);
 __decorate([
@@ -163,11 +170,14 @@ __decorate([
     (0, swagger_1.ApiNotFoundResponse)({
         description: 'Product with id ... can`t be found'
     }),
+    (0, common_1.UseGuards)(auth_guard_1.AuthGuard, role_guard_1.RolesGuard),
+    (0, role_decorator_1.Roles)(role_enum_1.RoleEnum.ADMIN, role_enum_1.RoleEnum.EMPLOYEE),
     openapi.ApiResponse({ status: 200, type: require("../dtos/responses/product.dto").ProductDTO }),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)()),
+    __param(2, (0, common_1.Request)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, update_product_dto_1.UpdateProductDTO]),
+    __metadata("design:paramtypes", [String, update_product_dto_1.UpdateProductDTO, Object]),
     __metadata("design:returntype", Promise)
 ], ProductController.prototype, "updateProduct", null);
 __decorate([
@@ -184,16 +194,18 @@ __decorate([
     (0, swagger_1.ApiNotFoundResponse)({
         description: 'Product with id ... can`t be found'
     }),
+    (0, common_1.UseGuards)(auth_guard_1.AuthGuard, role_guard_1.RolesGuard),
+    (0, role_decorator_1.Roles)(role_enum_1.RoleEnum.ADMIN, role_enum_1.RoleEnum.EMPLOYEE),
     openapi.ApiResponse({ status: 200, type: require("../dtos/responses/product.dto").ProductDTO }),
     __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Request)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], ProductController.prototype, "deleteProduct", null);
 ProductController = __decorate([
     (0, common_1.Controller)('/v1/product'),
     (0, swagger_1.ApiTags)('Product'),
-    (0, swagger_1.ApiBearerAuth)(),
     __param(0, (0, common_1.Inject)('IProductService')),
     __param(1, (0, common_1.Inject)('IProductBenefitService')),
     __param(2, (0, common_1.Inject)('IProductPackageService')),

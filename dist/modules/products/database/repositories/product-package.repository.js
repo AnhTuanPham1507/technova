@@ -28,7 +28,6 @@ let ProductPackageRepository = class ProductPackageRepository {
         const query = this.productPackageRepo.createQueryBuilder('productPackage');
         query.leftJoinAndSelect('productPackage.product', 'product');
         query.leftJoinAndSelect('productPackage.benefitValues', 'benefitValues');
-        query.withDeleted();
         query.where('(productPackage.product = :productId)', {
             productId: id,
         });

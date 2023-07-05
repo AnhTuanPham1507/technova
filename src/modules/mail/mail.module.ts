@@ -4,6 +4,8 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
 import { SharedModule } from "@modules/shared/shared.module";
 import { EnvConfigService } from "@modules/shared/services/api-config.service";
 import { MailService } from "./services/mail.service";
+import path from "path";
+import { MailController } from "./controllers/mail.controller";
 
 @Module({
     imports: [
@@ -14,7 +16,6 @@ import { MailService } from "./services/mail.service";
                     transport: {
                         host: configService.mailConfig.host,
                         port: configService.mailConfig.port,
-                        ignoreTLS: true,
                         secure: false,
                         auth: {
                           user: configService.mailConfig.user,
@@ -24,9 +25,9 @@ import { MailService } from "./services/mail.service";
                       defaults: {
                         from: '"No Reply @Technova',
                       },
-                      preview: true,
+                      preview: false,
                       template: {
-                        dir: './templates',
+                        dir: path.join(__dirname,'templates'),
                         adapter: new HandlebarsAdapter(), // or new PugAdapter() or new EjsAdapter()
                         options: {
                           strict: true,
@@ -43,6 +44,7 @@ import { MailService } from "./services/mail.service";
             useClass: MailService
         },
     ],
+    controllers: [MailController],
     exports: [
         'IMailService'
     ]

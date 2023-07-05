@@ -1,5 +1,5 @@
 import { PageDTO } from "@common/dtos/responses/page.dto";
-import { Body, Controller, Delete, Get, HttpStatus, Inject, Param, Post, Put, Query } from "@nestjs/common";
+import { Body, Controller, Delete, Get, HttpStatus, Inject, Param, Post, Put, Query, Request, UseGuards } from "@nestjs/common";
 import { ApiBearerAuth, ApiBody, ApiNotFoundResponse, ApiOkResponse, ApiResponse, ApiTags, ApiUnauthorizedResponse } from "@nestjs/swagger";
 import { ProductDTO } from "../dtos/responses/product.dto";
 import { IProductService } from "../services/product.service";
@@ -10,12 +10,14 @@ import { IProductBenefitService } from "../services/product-benefit.service";
 import { IProductPackageService } from "../services/product-package.service";
 import { ProductPackageDTO } from "../dtos/responses/product-package.dto";
 import { ProductPageOptionsDTO } from "../dtos/requests/product-page-option.dto";
+import { AuthGuard } from "@modules/auth/guards/auth.guard";
+
+import { RolesGuard } from "@modules/auth/guards/role.guard";
+import { RoleEnum } from "@constants/enums/role.enum";
+import { Roles } from "@decorators/role.decorator";
 
 @Controller('/v1/product')
 @ApiTags('Product')
-@ApiBearerAuth()
-// @UseGuards(OtableAuthGuard)
-// @Roles(RoleType.ADMIN, RoleType.USER)
 export class ProductController {
   constructor(
     @Inject('IProductService')
@@ -112,10 +114,13 @@ export class ProductController {
     status: HttpStatus.INTERNAL_SERVER_ERROR,
     description: 'Internal server errors.',
   })
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(RoleEnum.ADMIN, RoleEnum.EMPLOYEE)
   createProduct(
     @Body() body: CreateProductDTO,
+    @Request() req
   ): Promise<ProductDTO> {
-    return this.productService.create(body, 'test');
+    return this.productService.create(body, req.user);
   }
 
   @Put('/:id')
@@ -132,11 +137,14 @@ export class ProductController {
   @ApiNotFoundResponse({
     description: 'Product with id ... can`t be found'
   })
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(RoleEnum.ADMIN, RoleEnum.EMPLOYEE)
   updateProduct(
     @Param('id') id: string,
     @Body() body: UpdateProductDTO,
+    @Request() req
   ): Promise<ProductDTO> {
-    return this.productService.update(id, body, 'test');
+    return this.productService.update(id, body, req.user);
   }
 
 
@@ -153,9 +161,12 @@ export class ProductController {
   @ApiNotFoundResponse({
     description: 'Product with id ... can`t be found'
   })
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(RoleEnum.ADMIN, RoleEnum.EMPLOYEE)
   deleteProduct(
     @Param('id') id: string,
+    @Request() req
   ): Promise<ProductDTO> {
-    return this.productService.delete(id, 'test');
+    return this.productService.delete(id,req.user);
   }
 }

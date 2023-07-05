@@ -1,3 +1,5 @@
+import { AuthModule } from "@modules/auth/auth.module";
+import { ImageModule } from "@modules/images/image.module";
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { SolutionController } from "./controllers/solution.controller";
@@ -11,6 +13,8 @@ import { SolutionService } from "./services/solution.service";
         TypeOrmModule.forFeature([
             SolutionEntity
         ]),
+        AuthModule,
+        ImageModule
     ],
     controllers: [SolutionController],
     providers: [

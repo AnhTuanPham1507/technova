@@ -4,11 +4,9 @@ import { PageDTO } from "@common/dtos/responses/page.dto";
 import { ImageObjectTypeEnum } from "@constants/enums/image-object-type.enum";
 import { QueryTypeEnum } from "@constants/enums/query-type.enum";
 import { UpdateImageDTO } from "@modules/images/dtos/requests/update-image.dto";
-import { ImageDTO } from "@modules/images/dtos/responses/image.dto";
 import { IImageService } from "@modules/images/services/image.service";
 import { ProductEntity } from "@modules/products/database/entities/product.entity";
-import { IProductService } from "@modules/products/services/product.service";
-import { forwardRef, Inject, Injectable } from "@nestjs/common";
+import { Inject, Injectable } from "@nestjs/common";
 import { BrandEntity } from "../database/entities/brand.entity";
 import { IBrandRepository } from "../database/repositories/brand.repository";
 import { CreateBrandDTO } from "../dtos/requests/create-brand.dto";
@@ -68,12 +66,11 @@ export class BrandService implements IBrandService {
         
         const createdBrand = await this.brandRepo.save(brand);
 
-        const assignImage = Object.assign(new UpdateImageDTO,{
+        const assignImage = Object.assign(new UpdateImageDTO(),{
             imageIds: [imageId],
             objectId: createdBrand.id,
             objectType: ImageObjectTypeEnum.BRAND
         })
-        console.log(assignImage)
         const images = await this.imageService.update(assignImage, userId);
         const brandDTO =  new BrandDTO(createdBrand, images[0]);
         return brandDTO

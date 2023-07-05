@@ -1,7 +1,12 @@
 import { PageOptionsDTO } from "@common/dtos/requests/page-options.dto";
 import { PageDTO } from "@common/dtos/responses/page.dto";
 import { QueryTypeEnum } from "@constants/enums/query-type.enum";
-import { Body, Controller, Delete, Get, HttpStatus, Inject, Param, Post, Put, Query } from "@nestjs/common";
+import { RoleEnum } from "@constants/enums/role.enum";
+import { Roles } from "@decorators/role.decorator";
+import { RolesGuard } from "@modules/auth/guards/role.guard";
+import { Body, Controller, Delete, Get, HttpStatus, Inject, Param, Post, Put, Query, Request, UseGuards } from "@nestjs/common";
+import { AuthGuard } from "@modules/auth/guards/auth.guard";
+
 import { ApiBearerAuth, ApiBody, ApiNotFoundResponse, ApiOkResponse, ApiResponse, ApiTags, ApiUnauthorizedResponse } from "@nestjs/swagger";
 import { CreateCategoryDTO } from "../dtos/requests/create-category.dto";
 import { UpdateCategoryDTO } from "../dtos/requests/update-category.dto";
@@ -11,9 +16,6 @@ import { ICategoryService } from "../services/category.service";
 
 @Controller('/v1/category')
 @ApiTags('Category')
-@ApiBearerAuth()
-// @UseGuards(OtableAuthGuard)
-// @Roles(RoleType.ADMIN, RoleType.USER)
 export class CategoryController {
   constructor(
     @Inject('ICategoryService')
@@ -67,10 +69,13 @@ export class CategoryController {
     status: HttpStatus.INTERNAL_SERVER_ERROR,
     description: 'Internal server errors.',
   })
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(RoleEnum.ADMIN,RoleEnum.EMPLOYEE)
   createCategory(
     @Body() body: CreateCategoryDTO,
+    @Request() req
   ): Promise<CategoryDTO> {
-    return this.categoryService.create(body, 'test');
+    return this.categoryService.create(body, req.user.id);
   }
 
   @Put('/:id')
@@ -87,11 +92,14 @@ export class CategoryController {
   @ApiNotFoundResponse({
     description: 'Category with id ... can`t be found'
   })
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(RoleEnum.ADMIN, RoleEnum.EMPLOYEE)
   updateCategory(
     @Param('id') id: string,
     @Body() body: UpdateCategoryDTO,
+    @Request() req
   ): Promise<CategoryDTO> {
-    return this.categoryService.update(id, body, 'test');
+    return this.categoryService.update(id, body, req.user.id);
   }
 
   @Delete('/:id')
@@ -107,9 +115,12 @@ export class CategoryController {
   @ApiNotFoundResponse({
     description: 'Category with id ... can`t be found'
   })
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(RoleEnum.ADMIN, RoleEnum.EMPLOYEE)
   deleteCategory(
     @Param('id') id: string,
+    @Request() req
   ): Promise<CategoryDTO> {
-    return this.categoryService.delete(id, 'test');
+    return this.categoryService.delete(id, req.user.id);
   }
 }

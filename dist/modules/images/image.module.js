@@ -7,6 +7,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ImageModule = void 0;
+const auth_module_1 = require("../auth/auth.module");
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const cloudinary_1 = require("cloudinary");
@@ -22,7 +23,8 @@ ImageModule = __decorate([
         imports: [
             typeorm_1.TypeOrmModule.forFeature([
                 image_entity_1.ImageEntity
-            ])
+            ]),
+            auth_module_1.AuthModule
         ],
         providers: [
             {

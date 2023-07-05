@@ -1,4 +1,7 @@
 import { imageFileFilter } from '@/utils/check-filetype';
+import { RoleEnum } from '@constants/enums/role.enum';
+import { Roles } from '@decorators/role.decorator';
+import { RolesGuard } from '@modules/auth/guards/role.guard';
 import {
     Body,
     Controller,
@@ -8,9 +11,12 @@ import {
     Param,
     Post,
     Put,
+    Request,
     UploadedFiles,
+    UseGuards,
     UseInterceptors,
   } from '@nestjs/common';
+import { AuthGuard } from "@modules/auth/guards/auth.guard";
 import {  FilesInterceptor } from '@nestjs/platform-express';
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOkResponse, ApiResponse, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { CreateImageDTO } from '../dtos/requests/create-image.dto';
@@ -21,8 +27,7 @@ import { IImageService } from '../services/image.service';
 @Controller('/v1/image')
 @ApiTags('Image')
 @ApiBearerAuth()
-// @UseGuards(OtableAuthGuard)
-// @Roles(RoleType.ADMIN, RoleType.USER)
+@UseGuards(AuthGuard, RolesGuard)
 export class ImageController {
     constructor(
         @Inject('IImageService')
@@ -60,11 +65,12 @@ export class ImageController {
           fileFilter: imageFileFilter,
         }),
     )
+    @Roles(RoleEnum.ADMIN, RoleEnum.EMPLOYEE)
     createImages(
         @UploadedFiles() files: CreateImageDTO[],
+        @Request() req
     ): Promise<ImageDTO[]> {
-        console.log(files)
-        return this.imageService.create(files, 'test');
+        return this.imageService.create(files, req.user.id);
     }
 
     @Put('')
@@ -78,10 +84,12 @@ export class ImageController {
         status: HttpStatus.INTERNAL_SERVER_ERROR,
         description: 'Internal server errors.',
     })
+    @Roles(RoleEnum.ADMIN, RoleEnum.EMPLOYEE)
     updateImages(
         @Body() updateImageDTO: UpdateImageDTO,
+        @Request() req
     ): Promise<ImageDTO[]> {
-        return this.imageService.update(updateImageDTO, 'test');
+        return this.imageService.update(updateImageDTO, req.user.id);
     }
 
     @Delete('/:id')
@@ -93,6 +101,7 @@ export class ImageController {
         status: HttpStatus.INTERNAL_SERVER_ERROR,
         description: 'Internal server errors.',
     })
+    @Roles(RoleEnum.ADMIN, RoleEnum.EMPLOYEE)
     deleteImage(
         @Param('id') id: string,
     ): Promise<void> {

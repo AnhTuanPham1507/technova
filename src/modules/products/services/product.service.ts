@@ -15,14 +15,15 @@ import { QueryTypeEnum } from "@constants/enums/query-type.enum";
 import { BrandDTO } from "@modules/brands/dtos/responses/brand.dto";
 import { CategoryDTO } from "@modules/categories/dtos/responses/category.dto";
 import { ProductPageOptionsDTO } from "../dtos/requests/product-page-option.dto";
+import { AccountDTO } from "@modules/auth/dtos/responses/account.dto";
 
 export interface IProductService {
-    create(createProduct: CreateProductDTO, userId: string): Promise<ProductDTO>;
+    create(createProduct: CreateProductDTO, account: AccountDTO): Promise<ProductDTO>;
     getAll(pageOptions: ProductPageOptionsDTO): Promise<PageDTO<ProductDTO>>;
     getById(id: string): Promise<ProductDTO>;
     getByIds(ids: string[]): Promise<ProductDTO[]>;
-    update(id: string, updateProduct: UpdateProductDTO, userId: string): Promise<ProductDTO>;
-    delete(id: string, userId: string): Promise<ProductDTO>;
+    update(id: string, updateProduct: UpdateProductDTO, account: AccountDTO): Promise<ProductDTO>;
+    delete(id: string, account: AccountDTO): Promise<ProductDTO>;
 }
 
 @Injectable()
@@ -38,15 +39,15 @@ export class ProductService implements IProductService{
         private readonly imageService: IImageService
     ){}
 
-    async create(createProduct: CreateProductDTO, userId: string): Promise<ProductDTO> {
-        const {brandId, categoryId, description, name, imageId, imageDescriptionIds} = createProduct;
+    async create(createProduct: CreateProductDTO, account: AccountDTO): Promise<ProductDTO> {
+        const {brandId, categoryId, description, name, imageId, isContactToSell} = createProduct;
 
         const brand = await this.brandService.getEntityById(brandId);
         const category = await this.categoryService.getEntityById(categoryId);
         
-        const product = new ProductEntity(name, description, brand, category);
-        product.createdBy = userId;
-        product.updatedBy = userId;
+        const product = new ProductEntity(name, description, isContactToSell, brand, category);
+        product.createdBy = account.id;
+        product.updatedBy = account.id;
 
         const createdProduct = await this.productRepo.save(product);
 
@@ -55,18 +56,11 @@ export class ProductService implements IProductService{
             objectId: createdProduct.id,
             objectType: ImageObjectTypeEnum.PRODUCT
         })
-        const images = await this.imageService.update(assignImage, userId);
-
-        // const assignImagesDescription = Object.assign(new UpdateImageDTO,{
-        //     imageIds: imageDescriptionIds,
-        //     objectId: createdProduct.id,
-        //     objectType: ImageObjectTypeEnum.PRODUCT_DESCRIPTION
-        // })
-        // await this.imageService.update(assignImagesDescription, userId);
+        const images = await this.imageService.update(assignImage, account.id);
         
         const brandDTO = createdProduct.brand? new BrandDTO(createdProduct.brand): undefined;
         const categoryDTO = createdProduct.category? new CategoryDTO(createdProduct.category): undefined;
-        const productDTO =  new ProductDTO(createdProduct, brandDTO, categoryDTO, undefined, images[0]);
+        const productDTO =  new ProductDTO(createdProduct, brandDTO, categoryDTO, images[0]);
         return productDTO
     }
 
@@ -102,7 +96,7 @@ export class ProductService implements IProductService{
         return productsDTO;
     }
 
-    async update(id: string, updateProduct: UpdateProductDTO, userId: string): Promise<ProductDTO>{
+    async update(id: string, updateProduct: UpdateProductDTO, account: AccountDTO): Promise<ProductDTO>{
         const foundProduct = await this.productRepo.getById(id);
         const brand = await this.brandService.getEntityById(updateProduct.brandId);
         const category = await this.categoryService.getEntityById(updateProduct.categoryId);
@@ -112,7 +106,7 @@ export class ProductService implements IProductService{
             brand,
             category,
             updatedAt: Moment.getCurrentDate(),
-            updatedBy: userId
+            updatedBy: account.id
         });
 
         const updatedProduct = await this.productRepo.save(product);
@@ -121,23 +115,24 @@ export class ProductService implements IProductService{
             objectId: updatedProduct.id,
             objectType: ImageObjectTypeEnum.PRODUCT
         })
-        const images = await this.imageService.update(assignImage, userId);
+        const images = await this.imageService.update(assignImage, account.id);
 
          const brandDTO = updatedProduct.brand? new BrandDTO(updatedProduct.brand): undefined;
         const categoryDTO = updatedProduct.category? new CategoryDTO(updatedProduct.category): undefined;
-        const productDTO =  new ProductDTO(updatedProduct, brandDTO, categoryDTO, undefined, images[0]);
+        const productDTO =  new ProductDTO(updatedProduct, brandDTO, categoryDTO, images[0]);
 
         return productDTO;
     }
 
-    async delete(id: string, userId: string): Promise<ProductDTO>{
+    async delete(id: string, account: AccountDTO): Promise<ProductDTO>{
         const foundProduct = await this.productRepo.getById(id);
 
         const product = Object.assign(foundProduct,{
             ...foundProduct,
             deletedAt: Moment.getCurrentDate(),
-            deletedBy:userId
+            deletedBy:account.id
         })
+
 
         const deletedProduct = await this.productRepo.save(product);
 

@@ -1,3 +1,4 @@
+import { AuthModule } from "@modules/auth/auth.module";
 import { ClientModule } from "@modules/clients/client.module";
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
@@ -10,7 +11,8 @@ import { NotificationService } from "./services/notification.service";
 @Module({
     imports: [
         TypeOrmModule.forFeature([NotificationEntity]),
-        ClientModule
+        ClientModule,
+        AuthModule
     ],
     providers: [
         {

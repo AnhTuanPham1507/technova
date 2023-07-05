@@ -4,9 +4,7 @@ import { PageDTO } from "@common/dtos/responses/page.dto";
 import { ImageObjectTypeEnum } from "@constants/enums/image-object-type.enum";
 import { QueryTypeEnum } from "@constants/enums/query-type.enum";
 import { UpdateImageDTO } from "@modules/images/dtos/requests/update-image.dto";
-import { ImageDTO } from "@modules/images/dtos/responses/image.dto";
 import { IImageService } from "@modules/images/services/image.service";
-import { ProductEntity } from "@modules/products/database/entities/product.entity";
 import { Inject, Injectable } from "@nestjs/common";
 import { NewsEntity } from "../database/entities/news.entity";
 import { INewsRepository } from "../database/repositories/news.repository";
@@ -28,6 +26,8 @@ export class NewsService implements INewsService {
     constructor(
         @Inject('INewsRepository')
         private readonly newsRepo: INewsRepository,
+        @Inject('IImageService')
+        private readonly imageService: IImageService
     ){}
 
     getEntityById(id: string): Promise<NewsEntity>{
@@ -36,24 +36,41 @@ export class NewsService implements INewsService {
 
     async getById(id: string): Promise<NewsDTO> {
         const foundNews = await this.newsRepo.getById(id); 
-        const newsDTO = new NewsDTO(foundNews);
+        const images = await this.imageService.getByObject(foundNews.id, ImageObjectTypeEnum.NEWS, QueryTypeEnum.ALL);
+        const newsDTO = new NewsDTO(foundNews, images[0]);
         return newsDTO;
     }
 
-    getAll(pageOptionsDTO: PageOptionsDTO): Promise<PageDTO<NewsDTO>>{
-        return this.newsRepo.getAll(pageOptionsDTO);
+    async getAll(pageOptionsDTO: PageOptionsDTO): Promise<PageDTO<NewsDTO>>{
+        const newsDTO = await this.newsRepo.getAll(pageOptionsDTO);
+        const mappedImageNews = await Promise.all(
+            newsDTO.data.map(
+                async news => {
+                    const images = await this.imageService.getByObject(news.id, ImageObjectTypeEnum.NEWS, QueryTypeEnum.ALL);
+                    news.image = images[0];
+                    return news;
+            })
+        )
+
+        newsDTO.data = mappedImageNews;
+        return newsDTO;
     }
 
     async create(createNews: CreateNewsDTO, userId: string): Promise<NewsDTO> {
-        const {content, title} = createNews;
+        const {content, title, description, imageId} = createNews;
 
-        const news = new NewsEntity(title, content);
+        const news = new NewsEntity(title, content, description);
         news.createdBy = userId;
         news.updatedBy = userId;
-        
         const createdNews = await this.newsRepo.save(news);
-        console.log(createNews)
-        return new NewsDTO(createdNews);
+
+        const assignImage = Object.assign(new UpdateImageDTO,{
+            imageIds: [imageId],
+            objectId: createdNews.id,
+            objectType: ImageObjectTypeEnum.NEWS
+        })
+        const images = await this.imageService.update(assignImage, userId)
+        return new NewsDTO(createdNews, images[0]);
     }
 
     async update(id: string, updateNews: UpdateNewsDTO, userId: string): Promise<NewsDTO>{
@@ -65,7 +82,15 @@ export class NewsService implements INewsService {
         });
 
         const updatedNews = await  this.newsRepo.save(news);
-        return new NewsDTO(updatedNews);
+
+        const assignImage = Object.assign(new UpdateImageDTO,{
+            imageIds: [updateNews.imageId],
+            objectId: updatedNews.id,
+            objectType: ImageObjectTypeEnum.NEWS
+        })
+        const images = await this.imageService.update(assignImage, userId);
+
+        return new NewsDTO(updatedNews, images[0]);
     }
 
     async delete(id: string, userId: string): Promise<NewsDTO>{

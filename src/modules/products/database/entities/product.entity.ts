@@ -3,7 +3,6 @@ import { BrandEntity } from "@modules/brands/database/entities/brand.entity";
 import { CategoryEntity } from "@modules/categories/database/entities/category.entity";
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne } from "typeorm";
 import { DiscountEntity } from "./discount.entity";
-import { ProductBenefitEntity } from "./product-benefit.entity";
 import { ProductPackageEntity } from "./product-package.entity";
 import { ProductTagEntity } from "./product-tag.entity";
 
@@ -20,6 +19,13 @@ export class ProductEntity extends AbstractEntity {
         type: 'text'
     })
     description: string;
+
+    @Column({
+        name: 'is_contact_to_sell',
+        type: 'boolean',
+        default: false
+    })
+    isContactToSell: boolean;
 
     @ManyToOne(
         () => BrandEntity,
@@ -61,12 +67,13 @@ export class ProductEntity extends AbstractEntity {
     benefits: ProductPackageEntity[];
 
 
-    constructor(name: string, description: string, brand: BrandEntity, category: CategoryEntity){
+    constructor(name: string, description: string, isContactToSell: boolean, brand: BrandEntity, category: CategoryEntity){
         super();
         this.name = name;
         this.description = description;
         this.brand = brand;
         this.category = category;
+        this.isContactToSell = isContactToSell;
     }
 }
 

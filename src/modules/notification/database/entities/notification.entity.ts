@@ -16,4 +16,10 @@ export class NotificationEntity extends AbstractEntity {
         default: false
     })
     isRead: boolean;
+
+    @Column({
+        name: 'create_for',
+        nullable: true
+    })
+    createFor: string ;
 }

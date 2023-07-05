@@ -29,23 +29,23 @@ let ProductService = class ProductService {
         this.productRepo = productRepo;
         this.imageService = imageService;
     }
-    async create(createProduct, userId) {
-        const { brandId, categoryId, description, name, imageId, imageDescriptionIds } = createProduct;
+    async create(createProduct, account) {
+        const { brandId, categoryId, description, name, imageId, isContactToSell } = createProduct;
         const brand = await this.brandService.getEntityById(brandId);
         const category = await this.categoryService.getEntityById(categoryId);
-        const product = new product_entity_1.ProductEntity(name, description, brand, category);
-        product.createdBy = userId;
-        product.updatedBy = userId;
+        const product = new product_entity_1.ProductEntity(name, description, isContactToSell, brand, category);
+        product.createdBy = account.id;
+        product.updatedBy = account.id;
         const createdProduct = await this.productRepo.save(product);
         const assignImage = Object.assign(new update_image_dto_1.UpdateImageDTO, {
             imageIds: [imageId],
             objectId: createdProduct.id,
             objectType: image_object_type_enum_1.ImageObjectTypeEnum.PRODUCT
         });
-        const images = await this.imageService.update(assignImage, userId);
+        const images = await this.imageService.update(assignImage, account.id);
         const brandDTO = createdProduct.brand ? new brand_dto_1.BrandDTO(createdProduct.brand) : undefined;
         const categoryDTO = createdProduct.category ? new category_dto_1.CategoryDTO(createdProduct.category) : undefined;
-        const productDTO = new product_dto_1.ProductDTO(createdProduct, brandDTO, categoryDTO, undefined, images[0]);
+        const productDTO = new product_dto_1.ProductDTO(createdProduct, brandDTO, categoryDTO, images[0]);
         return productDTO;
     }
     async getAll(pageOptions) {
@@ -73,27 +73,27 @@ let ProductService = class ProductService {
         const productsDTO = foundProducts.map(product => new product_dto_1.ProductDTO(product));
         return productsDTO;
     }
-    async update(id, updateProduct, userId) {
+    async update(id, updateProduct, account) {
         const foundProduct = await this.productRepo.getById(id);
         const brand = await this.brandService.getEntityById(updateProduct.brandId);
         const category = await this.categoryService.getEntityById(updateProduct.categoryId);
         const product = Object.assign(foundProduct, Object.assign(Object.assign({}, updateProduct), { brand,
-            category, updatedAt: my_moment_util_1.Moment.getCurrentDate(), updatedBy: userId }));
+            category, updatedAt: my_moment_util_1.Moment.getCurrentDate(), updatedBy: account.id }));
         const updatedProduct = await this.productRepo.save(product);
         const assignImage = Object.assign(new update_image_dto_1.UpdateImageDTO, {
             imageIds: [updateProduct.imageId],
             objectId: updatedProduct.id,
             objectType: image_object_type_enum_1.ImageObjectTypeEnum.PRODUCT
         });
-        const images = await this.imageService.update(assignImage, userId);
+        const images = await this.imageService.update(assignImage, account.id);
         const brandDTO = updatedProduct.brand ? new brand_dto_1.BrandDTO(updatedProduct.brand) : undefined;
         const categoryDTO = updatedProduct.category ? new category_dto_1.CategoryDTO(updatedProduct.category) : undefined;
-        const productDTO = new product_dto_1.ProductDTO(updatedProduct, brandDTO, categoryDTO, undefined, images[0]);
+        const productDTO = new product_dto_1.ProductDTO(updatedProduct, brandDTO, categoryDTO, images[0]);
         return productDTO;
     }
-    async delete(id, userId) {
+    async delete(id, account) {
         const foundProduct = await this.productRepo.getById(id);
-        const product = Object.assign(foundProduct, Object.assign(Object.assign({}, foundProduct), { deletedAt: my_moment_util_1.Moment.getCurrentDate(), deletedBy: userId }));
+        const product = Object.assign(foundProduct, Object.assign(Object.assign({}, foundProduct), { deletedAt: my_moment_util_1.Moment.getCurrentDate(), deletedBy: account.id }));
         const deletedProduct = await this.productRepo.save(product);
         const productDTO = new product_dto_1.ProductDTO(deletedProduct);
         return productDTO;

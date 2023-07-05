@@ -1,6 +1,8 @@
 import { PageOptionsDTO } from "@common/dtos/requests/page-options.dto";
+import { OrderStatusEnum } from "@constants/enums/order-status.enum";
 import { ApiProperty } from "@nestjs/swagger";
-import { IsEmail, IsOptional, IsPhoneNumber } from "class-validator";
+import { Transform, Type } from "class-transformer";
+import { IsBoolean, IsBooleanString, IsDateString, IsEmail, IsEnum, IsOptional, IsPhoneNumber, IsString } from "class-validator";
 
 
 export class OrderPageOptionsDTO extends PageOptionsDTO {
@@ -14,10 +16,32 @@ export class OrderPageOptionsDTO extends PageOptionsDTO {
     email: string;
 
     @ApiProperty({
-        name: 'phone',
-        example: 'phone'
+        name: 'startDate'
     })
-    @IsPhoneNumber('VI')
     @IsOptional()
-    phone: string;
+    @IsDateString()
+    startDate: Date;
+
+    @ApiProperty({
+        name: 'endDate'
+    })
+    @IsOptional()
+    @IsDateString()
+    endDate: Date;
+
+    @ApiProperty({
+        name: 'status'
+    })
+    @IsOptional()
+    @IsEnum(OrderStatusEnum)
+    status: OrderStatusEnum;
+
+    @ApiProperty({
+        name: 'isPaid',
+        example: true
+    })
+    @IsBoolean()
+    @IsOptional()
+    @Transform(({ value} ) => value === 'true')
+    isPaid: boolean;
 }

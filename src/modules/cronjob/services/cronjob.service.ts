@@ -20,7 +20,6 @@ export class CronjobService {
         const deleteImages = await this.imageService.getAllEntity();
         let deletedImageNumber = 0;
         this.logger.log(`Start to scan images not link to object`);
-        console.log(deleteImages)
         for(const deleteImage of deleteImages){
             if(!deleteImage.objectId || !deleteImage.objectType){
                 await this.imageService.delete(deleteImage.cloudinaryId);

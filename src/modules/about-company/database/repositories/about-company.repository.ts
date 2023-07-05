@@ -56,6 +56,12 @@ export class AboutCompanyRepository implements IAboutCompanyRepository {
             query.andWhere('aboutCompany.deleted_at is not null');
             break;
         }
+
+        if(pageOptionsDTO.q){
+            query.andWhere('aboutCompany.title ILIKE :q',{
+                q: `%${pageOptionsDTO.q}%`,
+            })
+        }
         
         query.orderBy(`aboutCompany.${pageOptionsDTO.orderBy}`, pageOptionsDTO.order);
     

@@ -57,14 +57,32 @@ export class OrderRepository implements IOrderRepository {
         }
 
         if (pageOptionsDTO.email) {
-          query.andWhere('(order.email = :q)', {
+          query.andWhere('(order.email ILIKE :q)', {
             q: `%${pageOptionsDTO.email}%`,
           });
         }
 
-        if (pageOptionsDTO.phone) {
-          query.andWhere('(order.phone = :q)', {
-            q: `%${pageOptionsDTO.phone}%`,
+        if (pageOptionsDTO.startDate) {
+          query.andWhere('(order.createdAt > :startDate)', {
+            startDate: pageOptionsDTO.startDate,
+          });
+        }
+
+        if (pageOptionsDTO.endDate) {
+          query.andWhere('(order.createdAt < :endDate)', {
+            endDate: pageOptionsDTO.endDate,
+          });
+        }
+
+        if (pageOptionsDTO.status) {
+          query.andWhere('(order.status = :status)', {
+            status: pageOptionsDTO.status,
+          });
+        }
+
+        if (pageOptionsDTO.isPaid !== null && pageOptionsDTO.isPaid !== undefined) {
+          query.andWhere('(order.isPaid = :isPaid)', {
+            isPaid: pageOptionsDTO.isPaid,
           });
         }
 
@@ -87,7 +105,6 @@ export class OrderRepository implements IOrderRepository {
         const itemCount = await query.getCount();
         const result = await query.getMany();
     
-        
         const ordersDTO = result.map((it) => {
           const detailsDTO = it.details.map(detail => new OrderDetailDTO(detail))
           return new OrderDTO(it, detailsDTO);
@@ -100,10 +117,10 @@ export class OrderRepository implements IOrderRepository {
     getAllByRangeTime(startTime: Date, endTime: Date): Promise<OrderEntity[]>{
       const query = this.orderRepo.createQueryBuilder('order');
 
-      query.where('order.createdAt >= :startTime', {
+      query.where('order.createdAt > :startTime', {
         startTime
       })
-      query.andWhere('order.createdAt <= :endTime', {
+      query.andWhere('order.createdAt < :endTime', {
         endTime
       })
       query.andWhere('order.status = :status',{

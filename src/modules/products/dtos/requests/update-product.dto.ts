@@ -1,5 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsArray, IsOptional, IsString, IsUUID } from "class-validator";
+import { Transform } from "class-transformer";
+import { IsArray, IsBoolean, IsOptional, IsString, IsUUID } from "class-validator";
 
 export class UpdateProductDTO {
     @ApiProperty({
@@ -16,6 +17,15 @@ export class UpdateProductDTO {
     })
     @IsString()
     description: string;
+
+    @ApiProperty({ 
+        name: 'isContactToSell',
+        type: 'boolean',
+    })
+    @IsBoolean()
+    @IsOptional()
+    @Transform(({ value} ) => value === 'true')
+    isContactToSell: boolean;
 
     @ApiProperty({
         name: 'brandId',

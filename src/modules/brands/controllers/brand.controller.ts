@@ -2,7 +2,12 @@
 import { PageOptionsDTO } from "@common/dtos/requests/page-options.dto";
 import { PageDTO } from "@common/dtos/responses/page.dto";
 import { QueryTypeEnum } from "@constants/enums/query-type.enum";
-import { Body, Controller, Delete, Get, HttpStatus, Inject, Param, Post, Put, Query } from "@nestjs/common";
+import { RoleEnum } from "@constants/enums/role.enum";
+import { Roles } from "@decorators/role.decorator";
+import { RolesGuard } from "@modules/auth/guards/role.guard";
+import { Body, Controller, Delete, Get, HttpStatus, Inject, Param, Post, Put, Query, Request, UseGuards } from "@nestjs/common";
+import { AuthGuard } from "@modules/auth/guards/auth.guard";
+
 import { ApiBearerAuth, ApiBody, ApiNotFoundResponse, ApiOkResponse, ApiResponse, ApiTags, ApiUnauthorizedResponse } from "@nestjs/swagger";
 import { CreateBrandDTO } from "../dtos/requests/create-brand.dto";
 import { UpdateBrandDTO } from "../dtos/requests/update-brand.dto";
@@ -12,9 +17,6 @@ import { IBrandService } from "../services/brand.service";
 
 @Controller('/v1/brand')
 @ApiTags('Brand')
-@ApiBearerAuth()
-// @UseGuards(OtableAuthGuard)
-// @Roles(RoleType.ADMIN, RoleType.USER)
 export class BrandController {
   constructor(
     @Inject('IBrandService')
@@ -68,10 +70,13 @@ export class BrandController {
     status: HttpStatus.INTERNAL_SERVER_ERROR,
     description: 'Internal server errors.',
   })
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(RoleEnum.ADMIN, RoleEnum.EMPLOYEE)
   createBrand(
     @Body() body: CreateBrandDTO,
+    @Request() req
   ): Promise<BrandDTO> {
-    return this.brandService.create(body, 'test');
+    return this.brandService.create(body, req.user.id);
   }
 
   @Put('/:id')
@@ -88,11 +93,14 @@ export class BrandController {
   @ApiNotFoundResponse({
     description: 'Brand with id ... can`t be found'
   })
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(RoleEnum.ADMIN, RoleEnum.EMPLOYEE)
   updateBrand(
     @Param('id') id: string,
     @Body() body: UpdateBrandDTO,
+    @Request() req
   ): Promise<BrandDTO> {
-    return this.brandService.update(id, body, 'test');
+    return this.brandService.update(id, body, req.user.id);
   }
 
   @Delete('/:id')
@@ -108,9 +116,12 @@ export class BrandController {
   @ApiNotFoundResponse({
     description: 'Brand with id ... can`t be found'
   })
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(RoleEnum.ADMIN, RoleEnum.EMPLOYEE)
   deleteBrand(
     @Param('id') id: string,
+    @Request() req
   ): Promise<BrandDTO> {
-    return this.brandService.delete(id, 'test');
+    return this.brandService.delete(id, req.user.id);
   }
 }

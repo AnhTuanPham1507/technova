@@ -7,6 +7,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProductModule = void 0;
+const auth_module_1 = require("../auth/auth.module");
 const brand_module_1 = require("../brands/brand.module");
 const category_module_1 = require("../categories/category.module");
 const image_module_1 = require("../images/image.module");
@@ -47,7 +48,8 @@ ProductModule = __decorate([
             ]),
             (0, common_1.forwardRef)(() => brand_module_1.BrandModule),
             category_module_1.CategoryModule,
-            image_module_1.ImageModule
+            image_module_1.ImageModule,
+            auth_module_1.AuthModule
         ],
         providers: [
             {

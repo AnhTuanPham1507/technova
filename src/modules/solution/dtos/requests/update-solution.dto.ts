@@ -1,6 +1,6 @@
 import { AbstractDTO } from "@common/dtos/abstract.dto";
 import { ApiProperty } from "@nestjs/swagger";
-import { IsOptional, IsString } from "class-validator";
+import { IsOptional, IsString, IsUUID } from "class-validator";
 
 
 export class UpdateSolutionDTO  {
@@ -17,4 +17,11 @@ export class UpdateSolutionDTO  {
     @IsString()
     @IsOptional()
     content: string;
+
+    @ApiProperty({
+        name: 'imageId'
+    })
+    @IsUUID(4)
+    @IsOptional()
+    imageId: string;
 }

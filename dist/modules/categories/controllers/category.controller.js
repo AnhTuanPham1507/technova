@@ -15,7 +15,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CategoryController = void 0;
 const openapi = require("@nestjs/swagger");
 const page_options_dto_1 = require("../../../common/dtos/requests/page-options.dto");
+const role_enum_1 = require("../../../constants/enums/role.enum");
+const role_decorator_1 = require("../../../decorators/role.decorator");
+const role_guard_1 = require("../../auth/guards/role.guard");
 const common_1 = require("@nestjs/common");
+const auth_guard_1 = require("../../auth/guards/auth.guard");
 const swagger_1 = require("@nestjs/swagger");
 const create_category_dto_1 = require("../dtos/requests/create-category.dto");
 const update_category_dto_1 = require("../dtos/requests/update-category.dto");
@@ -30,14 +34,14 @@ let CategoryController = class CategoryController {
     getCategory(id) {
         return this.categoryService.getById(id);
     }
-    createCategory(body) {
-        return this.categoryService.create(body, 'test');
+    createCategory(body, req) {
+        return this.categoryService.create(body, req.user.id);
     }
-    updateCategory(id, body) {
-        return this.categoryService.update(id, body, 'test');
+    updateCategory(id, body, req) {
+        return this.categoryService.update(id, body, req.user.id);
     }
-    deleteCategory(id) {
-        return this.categoryService.delete(id, 'test');
+    deleteCategory(id, req) {
+        return this.categoryService.delete(id, req.user.id);
     }
 };
 __decorate([
@@ -90,10 +94,13 @@ __decorate([
         status: common_1.HttpStatus.INTERNAL_SERVER_ERROR,
         description: 'Internal server errors.',
     }),
+    (0, common_1.UseGuards)(auth_guard_1.AuthGuard, role_guard_1.RolesGuard),
+    (0, role_decorator_1.Roles)(role_enum_1.RoleEnum.ADMIN, role_enum_1.RoleEnum.EMPLOYEE),
     openapi.ApiResponse({ status: 201, type: require("../dtos/responses/category.dto").CategoryDTO }),
     __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.Request)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [create_category_dto_1.CreateCategoryDTO]),
+    __metadata("design:paramtypes", [create_category_dto_1.CreateCategoryDTO, Object]),
     __metadata("design:returntype", Promise)
 ], CategoryController.prototype, "createCategory", null);
 __decorate([
@@ -111,11 +118,14 @@ __decorate([
     (0, swagger_1.ApiNotFoundResponse)({
         description: 'Category with id ... can`t be found'
     }),
+    (0, common_1.UseGuards)(auth_guard_1.AuthGuard, role_guard_1.RolesGuard),
+    (0, role_decorator_1.Roles)(role_enum_1.RoleEnum.ADMIN, role_enum_1.RoleEnum.EMPLOYEE),
     openapi.ApiResponse({ status: 200, type: require("../dtos/responses/category.dto").CategoryDTO }),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)()),
+    __param(2, (0, common_1.Request)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, update_category_dto_1.UpdateCategoryDTO]),
+    __metadata("design:paramtypes", [String, update_category_dto_1.UpdateCategoryDTO, Object]),
     __metadata("design:returntype", Promise)
 ], CategoryController.prototype, "updateCategory", null);
 __decorate([
@@ -132,16 +142,18 @@ __decorate([
     (0, swagger_1.ApiNotFoundResponse)({
         description: 'Category with id ... can`t be found'
     }),
+    (0, common_1.UseGuards)(auth_guard_1.AuthGuard, role_guard_1.RolesGuard),
+    (0, role_decorator_1.Roles)(role_enum_1.RoleEnum.ADMIN, role_enum_1.RoleEnum.EMPLOYEE),
     openapi.ApiResponse({ status: 200, type: require("../dtos/responses/category.dto").CategoryDTO }),
     __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Request)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], CategoryController.prototype, "deleteCategory", null);
 CategoryController = __decorate([
     (0, common_1.Controller)('/v1/category'),
     (0, swagger_1.ApiTags)('Category'),
-    (0, swagger_1.ApiBearerAuth)(),
     __param(0, (0, common_1.Inject)('ICategoryService')),
     __metadata("design:paramtypes", [Object])
 ], CategoryController);

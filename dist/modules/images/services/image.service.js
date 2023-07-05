@@ -44,7 +44,6 @@ let ImageService = class ImageService {
             updatedBy: userId,
             updatedAt: my_moment_util_1.Moment.getCurrentDate()
         }));
-        console.log(updateImages);
         const images = await this.imageRepo.saveMany(updateImages);
         const imagesDTO = images.map(image => new image_dto_1.ImageDTO(image));
         return imagesDTO;

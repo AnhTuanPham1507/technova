@@ -17,16 +17,17 @@ const category_dto_1 = require("../../../categories/dtos/responses/category.dto"
 const image_dto_1 = require("../../../images/dtos/responses/image.dto");
 const swagger_1 = require("@nestjs/swagger");
 class ProductDTO extends abstract_dto_1.AbstractDTO {
-    constructor(product, brandDTO, categoryDTO, benefitsDTO, imageDTO) {
+    constructor(product, brandDTO, categoryDTO, imageDTO) {
         super(product);
         this.name = product.name;
         this.description = product.description;
+        this.isContactToSell = Boolean(product.isContactToSell);
         this.brand = brandDTO;
         this.category = categoryDTO;
         this.image = imageDTO;
     }
     static _OPENAPI_METADATA_FACTORY() {
-        return { name: { required: true, type: () => String }, description: { required: true, type: () => String }, brand: { required: false, type: () => require("../../../brands/dtos/responses/brand.dto").BrandDTO }, category: { required: false, type: () => require("../../../categories/dtos/responses/category.dto").CategoryDTO }, image: { required: false, type: () => require("../../../images/dtos/responses/image.dto").ImageDTO } };
+        return { name: { required: true, type: () => String }, description: { required: true, type: () => String }, isContactToSell: { required: true, type: () => Boolean }, brand: { required: false, type: () => require("../../../brands/dtos/responses/brand.dto").BrandDTO }, category: { required: false, type: () => require("../../../categories/dtos/responses/category.dto").CategoryDTO }, image: { required: false, type: () => require("../../../images/dtos/responses/image.dto").ImageDTO } };
     }
 }
 __decorate([
@@ -44,6 +45,13 @@ __decorate([
     }),
     __metadata("design:type", String)
 ], ProductDTO.prototype, "description", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({
+        name: 'isContactToSell',
+        type: 'boolean',
+    }),
+    __metadata("design:type", Boolean)
+], ProductDTO.prototype, "isContactToSell", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({
         name: 'brand',

@@ -1,6 +1,6 @@
 import { RoleEnum } from '@constants/enums/role.enum';
 import { EnvConfigService } from '@modules/shared/services/api-config.service';
-import { Injectable, UnauthorizedException, Inject } from '@nestjs/common';
+import { Injectable, UnauthorizedException, Inject, ForbiddenException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { AccountEntity } from '../database/entities/account.entity';
 import { IAccountRepository } from '../database/repositories/account.repository';
@@ -21,7 +21,15 @@ export interface jwtPayload {
 }
 
 export interface IAuthService {
-    signIn(loginDTO: LoginDTO): Promise<jwtPayload>
+    signIn(loginDTO: LoginDTO): Promise<jwtPayload>;
+    signInAdmin(loginDTO: LoginDTO): Promise<jwtPayload>;
+    forgotPassword(forgotPasswordDTO: ForgotPasswordDTO): Promise<void>;
+    delete(id: string, actor: AccountDTO): Promise<AccountDTO>;
+    create(createAccount: CreateAccountDTO): Promise<AccountEntity>;
+    updatePassword(updateAccountDTO:  UpdateAccountDTO): Promise<AccountDTO>;
+    getAdminAccount(): Promise<AccountDTO>;
+    hashPassword(password: string): Promise<string>;
+    save(account: AccountEntity): Promise<AccountEntity>;
 }
 
 @Injectable()
@@ -42,13 +50,39 @@ export class AuthService implements IAuthService{
     return hashPassword;
   }
 
+  save(account: AccountEntity): Promise<AccountEntity>{
+    return this.accountRepo.save(account);
+  }
+
   async signIn(loginDTO: LoginDTO): Promise<jwtPayload> {
     const account = await this.accountRepo.getByEmail(loginDTO.email);
     const isMatch = await bcrypt.compare(loginDTO.password, account?.password);
 
-    if (isMatch) {
+    if (!isMatch) {
       throw new UnauthorizedException();
     }
+    const payload = { id: account.id, email: account.email, role: account.role };
+    return {
+      accessToken: await this.jwtService.signAsync(JSON.stringify(payload), {
+        secret: this.configService.authConfig.jwtPrivateKey,
+      }),
+      expireIn: this.configService.authConfig.jwtExpirationTime
+    };
+  }
+
+  async signInAdmin(loginDTO: LoginDTO): Promise<jwtPayload> {
+    const account = await this.accountRepo.getByEmail(loginDTO.email);
+
+    const isMatch = await bcrypt.compare(loginDTO.password, account.password);
+
+    if (!isMatch) {
+      throw new UnauthorizedException(`Password is not correct`);
+    }
+
+    if(account.role !== RoleEnum.ADMIN && account.role !== RoleEnum.EMPLOYEE ){
+      throw new ForbiddenException(`This is admin site, you don't have permission to access. Please contact admin to take action`)
+    }
+
     const payload = { id: account.id, email: account.email, role: account.role };
     return {
       accessToken: await this.jwtService.signAsync(JSON.stringify(payload), {
@@ -61,7 +95,7 @@ export class AuthService implements IAuthService{
   async create(createAccount: CreateAccountDTO): Promise<AccountEntity>{
     const {email, password} = createAccount;
     const hashedPassword = await this.hashPassword(password);
-    const account = new AccountEntity(email, hashedPassword, RoleEnum.USER);
+    const account = new AccountEntity(email, hashedPassword, createAccount.role);
 
     const createdAccount = this.accountRepo.save(account);
 
@@ -71,11 +105,11 @@ export class AuthService implements IAuthService{
   async forgotPassword(forgotPasswordDTO: ForgotPasswordDTO): Promise<void>{
     const account = await this.accountRepo.getByEmail(forgotPasswordDTO.email);
     const newPassword = uuid();
-    const updatePassword = new UpdateAccountDTO();
-    updatePassword.password = newPassword;
-    await this.update(account.id,updatePassword);
+    account.password = await this.hashPassword(newPassword);
 
-    const subject = 'Lấy lại mật khẩu Technova';
+    await this.accountRepo.save(account);
+
+    const subject = 'Lấy lại mật khẩu';
     const template = 'forgot-password.hbs';
     const context = {
       name: forgotPasswordDTO.email,
@@ -92,10 +126,15 @@ export class AuthService implements IAuthService{
     await this.mailService.sendMail(payload);
   }
 
-  async update(id: string, updateAccountDTO:  UpdateAccountDTO): Promise<AccountDTO>{
-    const account = await this.accountRepo.getById(id);
+  async updatePassword(updateAccountDTO:  UpdateAccountDTO): Promise<AccountDTO>{
+    const account = await this.accountRepo.getByEmail(updateAccountDTO.email);
+    const isMatch = await bcrypt.compare(updateAccountDTO.currentPassword, account.password);
 
-    const hashedPassword = await this.hashPassword(updateAccountDTO.password);
+    if (!isMatch) {
+      throw new UnauthorizedException(`Password is not correct`);
+    }
+
+    const hashedPassword = await this.hashPassword(updateAccountDTO.newPassword);
 
     account.password = hashedPassword;
 
@@ -113,5 +152,8 @@ export class AuthService implements IAuthService{
     return new AccountDTO(deletedAccount);
   }
 
-  
+  async getAdminAccount(): Promise<AccountDTO>{
+    const admin = await  this.accountRepo.getAdminAccount();
+    return new AccountDTO(admin);
+  }
 }

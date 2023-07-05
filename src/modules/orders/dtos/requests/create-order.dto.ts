@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { Type } from "class-transformer";
+import { Transform, Type } from "class-transformer";
 import { IsArray, IsEmail, IsNumber, IsOptional, IsPhoneNumber, IsString, IsUUID, Min, ValidateNested } from "class-validator";
 import { CreateOrderDetailDTO } from "./create-order-detail.dto";
 
@@ -23,6 +23,7 @@ export class CreateOrderDTO  {
         name: 'phone',
         example: '+84772294749'
     })
+    @Transform((v) => "+84" + v.value )
     @IsPhoneNumber('VI')
     phone: string;
 

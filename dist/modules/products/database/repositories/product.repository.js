@@ -40,11 +40,11 @@ let ProductRepository = class ProductRepository {
                 q: `%${pageOptionsDTO.q}%`,
             });
         }
-        if (pageOptionsDTO.brandId) {
-            query.andWhere('brand.id = :brandId', { brandId: pageOptionsDTO.brandId });
+        if (pageOptionsDTO.brandIds) {
+            query.andWhere('brand.id in (:...brandIds)', { brandIds: pageOptionsDTO.brandIds });
         }
-        if (pageOptionsDTO.categoryId) {
-            query.andWhere('brand.id = :categoryId', { categoryId: pageOptionsDTO.categoryId });
+        if (pageOptionsDTO.categoryIds) {
+            query.andWhere('category.id in(:...categoryIds)', { categoryIds: pageOptionsDTO.categoryIds });
         }
         switch (pageOptionsDTO.queryType) {
             case query_type_enum_1.QueryTypeEnum.ALL:

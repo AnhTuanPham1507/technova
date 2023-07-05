@@ -12,6 +12,8 @@ import {createHmac} from 'crypto';
 import { UpdateOrderDTO } from '@modules/orders/dtos/requests/update-order.dto';
 import { CreatePaymentDTO } from '@modules/orders/dtos/requests/create-payment.dto';
 import { IPaymentService } from '@modules/orders/services/payment.service';
+import { AccountDTO } from '@modules/auth/dtos/responses/account.dto';
+import { IAuthService } from '@modules/auth/services/auth.service';
 
 export interface IMoMoService {
   requestPayment(
@@ -28,7 +30,9 @@ export class MoMoService implements IMoMoService {
     @Inject('IOrderService')
     private readonly orderService: IOrderService,
     @Inject('IPaymentService')
-    private readonly paymentService: IPaymentService
+    private readonly paymentService: IPaymentService,
+    @Inject('IAuthService')
+    private readonly authService: IAuthService,
   ) {
   }
 
@@ -75,11 +79,11 @@ export class MoMoService implements IMoMoService {
   }
 
   async handleResultPayment(payload: NotificationMoMoDTO): Promise<void>{
+    const adminAccount = await this.authService.getAdminAccount();
     const {amount, extraData, orderId, orderInfo, requestId, orderType, transId, resultCode, message, payType, responseTime, signature} = payload;
     const { secretKey, partnerCode, accessKey } = this.configService.momoConfig;
     const rawSignature = "accessKey="+accessKey+"&amount=" + amount+"&extraData=" + extraData+ "&message="+ message +"&orderId=" + orderId+"&orderInfo=" + orderInfo+"&orderType="+orderType+"&partnerCode=" + partnerCode +"&payType=" + payType+"&requestId=" + requestId+"&responseTime="+responseTime+"&resultCode=" + resultCode+"&transId="+transId
     //puts raw signature
-
     //signature
     const mySignature = createHmac('sha256', secretKey)
         .update(rawSignature)
@@ -88,12 +92,12 @@ export class MoMoService implements IMoMoService {
     if(signature === mySignature && resultCode === 0){
       const updateOrderData = new UpdateOrderDTO();
       updateOrderData.isPaid = true;
-      await this.orderService.update(orderId, updateOrderData, 'momo');
+      await this.orderService.update(orderId, updateOrderData, adminAccount);
 
       const payment = new CreatePaymentDTO();
       payment.momoId = transId;
       payment.orderId = orderId;
-      await this.paymentService.create(payment);
+      await this.paymentService.create(payment, adminAccount);
     }
   }
 }

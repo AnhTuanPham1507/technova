@@ -53,6 +53,9 @@ let ImageRepository = class ImageRepository {
             where: {
                 objectId,
                 objectType
+            },
+            order: {
+                createdAt: 'DESC'
             }
         });
     }

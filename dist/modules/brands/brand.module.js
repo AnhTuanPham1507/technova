@@ -7,6 +7,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BrandModule = void 0;
+const auth_module_1 = require("../auth/auth.module");
 const image_module_1 = require("../images/image.module");
 const product_module_1 = require("../products/product.module");
 const common_1 = require("@nestjs/common");
@@ -24,7 +25,8 @@ BrandModule = __decorate([
                 brand_entity_1.BrandEntity
             ]),
             (0, common_1.forwardRef)(() => product_module_1.ProductModule),
-            image_module_1.ImageModule
+            image_module_1.ImageModule,
+            auth_module_1.AuthModule
         ],
         providers: [
             {

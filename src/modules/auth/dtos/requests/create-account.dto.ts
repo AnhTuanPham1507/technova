@@ -1,5 +1,5 @@
 
-import { IsString, Max, Min } from "class-validator";
+import { IsEnum, IsOptional, IsString, Max, Min } from "class-validator";
 import { ApiProperty } from "@nestjs/swagger";
 import { RoleEnum } from "@constants/enums/role.enum";
 
@@ -21,5 +21,15 @@ export class CreateAccountDTO{
     // @Min(8)
     // @Max(50)
     password: string;
+
+    @ApiProperty({
+        name: 'password',
+        example: 'password'
+    })
+    @IsEnum(RoleEnum)
+    // @Min(8)
+    // @Max(50)
+    @IsOptional()
+    role: RoleEnum;
 
 }

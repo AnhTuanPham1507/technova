@@ -57,6 +57,12 @@ export class SolutionRepository implements ISolutionRepository {
             break;
         }
         
+        if(pageOptionsDTO.q){
+            query.andWhere('aboutCompany.title ILIKE :q',{
+                q: `%${pageOptionsDTO.q}%`,
+            })
+        }
+        
         query.orderBy(`solution.${pageOptionsDTO.orderBy}`, pageOptionsDTO.order);
     
         query.skip(pageOptionsDTO.skip);

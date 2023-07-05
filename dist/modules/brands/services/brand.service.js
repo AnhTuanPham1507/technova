@@ -49,12 +49,11 @@ let BrandService = class BrandService {
         brand.createdBy = userId;
         brand.updatedBy = userId;
         const createdBrand = await this.brandRepo.save(brand);
-        const assignImage = Object.assign(new update_image_dto_1.UpdateImageDTO, {
+        const assignImage = Object.assign(new update_image_dto_1.UpdateImageDTO(), {
             imageIds: [imageId],
             objectId: createdBrand.id,
             objectType: image_object_type_enum_1.ImageObjectTypeEnum.BRAND
         });
-        console.log(assignImage);
         const images = await this.imageService.update(assignImage, userId);
         const brandDTO = new brand_dto_1.BrandDTO(createdBrand, images[0]);
         return brandDTO;

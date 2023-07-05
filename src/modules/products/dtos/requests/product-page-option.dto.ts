@@ -2,22 +2,23 @@ import { PageOptionsDTO } from "@common/dtos/requests/page-options.dto";
 import { ApiProperty } from "@nestjs/swagger";
 import { IsOptional, IsUUID } from "class-validator";
 
-
 export class ProductPageOptionsDTO extends PageOptionsDTO {
 
     @ApiProperty({
-        name: 'brandId',
-        example: 'uuid'
+        name: 'brandIds',
+        isArray: true,
+        nullable: true
     })
-    @IsUUID(4)
+    @IsUUID(4,{each: true})
     @IsOptional()
-    brandId: string;
+    brandIds: string[];
 
     @ApiProperty({
-        name: 'categoryId',
-        example: 'uuid'
+        name: 'categoryIds',
+        isArray: true,
+        nullable: true
     })
-    @IsUUID(4)
+    @IsUUID(4,{each: true, })
     @IsOptional()
-    categoryId: string;
+    categoryIds: string[];
 }

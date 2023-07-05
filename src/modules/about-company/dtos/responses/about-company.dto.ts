@@ -1,5 +1,6 @@
 import { AbstractDTO } from "@common/dtos/abstract.dto";
 import { AboutCompanyEntity } from "@modules/about-company/database/entities/about-company.entity";
+import { ImageDTO } from "@modules/images/dtos/responses/image.dto";
 import { ApiProperty } from "@nestjs/swagger";
 
 
@@ -13,10 +14,23 @@ export class AboutCompanyDTO extends AbstractDTO {
         name: 'content'
     })
     content: string;
+    
+    @ApiProperty({
+        name: 'description'
+    })
+    description: string;
 
-    constructor(aboutCompany: AboutCompanyEntity){
+    @ApiProperty({
+        name: 'image',
+        type: ImageDTO
+    })
+    image?: ImageDTO;
+
+    constructor(aboutCompany: AboutCompanyEntity, imagesDTO?: ImageDTO){
         super(aboutCompany);
         this.title = aboutCompany.title;
         this.content = aboutCompany.content;
+        this.description = aboutCompany.description;
+        this.image = imagesDTO;
     }
 }
