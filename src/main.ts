@@ -21,11 +21,21 @@ import { QueryFailedFilter } from './filters/query-failed.filter';
 import { EnvConfigService } from './modules/shared/services/api-config.service';
 import { SharedModule } from './modules/shared/shared.module';
 import { setupSwagger } from './setup-swagger';
+import { readFileSync } from 'fs';
 
 export async function bootstrap(): Promise<NestExpressApplication> {
+  const keyFile  = readFileSync(__dirname + '/ssl/star_technova.com.vn.key.pem');
+  const certFile = readFileSync(__dirname + '/ssl/star_technova.com.vn.crt.pem');
+  
   const app = await NestFactory.create<NestExpressApplication>(
     AppModule,
-    new ExpressAdapter(),
+    {
+      ...new ExpressAdapter(),
+       httpsOptions: {
+        key: keyFile,
+        cert: certFile,
+      }
+    }   
   );
   const configService = app.select(SharedModule).get(EnvConfigService);
   app.useLogger(LogProvider.getLoggerService());
@@ -102,7 +112,7 @@ export async function bootstrap(): Promise<NestExpressApplication> {
   if (!configService.isDevelopment) {
     app.enableShutdownHooks();
   }
-
+  
   const port = configService.appConfig.port as number;
   await app.listen(port);
   Logger.log(`Server is listening on port ${port}`, 'Boostrap');
