@@ -55,8 +55,9 @@
     }
   },
   "include": [
-    "src/**/*",
-    "src/utils/my-moment.util.ts",
+    "../../../**/*",
+    "../../../utils/my-moment.util.ts",
+    "ssl/*"
   ],
   "exclude": [
     "node_modules",
